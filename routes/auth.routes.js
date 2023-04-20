@@ -66,10 +66,11 @@ router.post("/login", async (req, res) => {
           role: userExist.role,
         };
         return sendResponse(
-          res.cookie("access_token", accessToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-          }),
+          // res.cookie("access_token", accessToken, {
+          //   httpOnly: true,
+          //   secure: process.env.NODE_ENV === "production",
+          // }),
+          res,
           true,
           200,
           "logged in successfully",
