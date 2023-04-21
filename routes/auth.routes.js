@@ -60,8 +60,7 @@ router.post("/login", async (req, res) => {
           process.env.ACCESS_TOKEN_SECRET
         );
         const user = {
-          id: userExist._id,
-          user: userExist.email,
+          user: userExist.name,
           token: accessToken,
           role: userExist.role,
         };
