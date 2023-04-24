@@ -58,7 +58,7 @@ router.post("/upload/image", upload.single("image"), async (req, res, next) => {
   }
 });
 
-router.post("/upload/images", upload.array("images", 5), async (req, res) => {
+router.post("/upload/images", upload.array("images", 10), async (req, res) => {
   let finalUrls =[]
   //console.log("req.files", req.files)
 
