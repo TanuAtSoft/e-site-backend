@@ -6,7 +6,11 @@ app.use(express.json());
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const cors = require("cors");
-
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded(
+  { extended:true }
+))
+app.use(bodyParser.json())
 
 
 mongoose.connect(
@@ -28,6 +32,9 @@ app.use(
     origin: "*",
   })
 );
+app.use(cors({
+  methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
+}));
 app.use(cookieParser());
 
 
