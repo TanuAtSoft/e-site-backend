@@ -1,12 +1,10 @@
-const router = require("express").Router();
 const User = require("../models/user.model");
-require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { sendResponse } = require("../helpers/requestHandlerHelper");
 const { roles } = require("../utils/constants");
 
-router.post("/register", async (req, res) => {
+exports.register = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
   try {
     const userExist = await User.findOne({
@@ -42,9 +40,9 @@ router.post("/register", async (req, res) => {
   } catch (e) {
     res.status(400).send(e.message);
   }
-});
+};
 
-router.post("/login", async (req, res) => {
+exports.login = async (req, res) => {
   const userExist = await User.findOne({
     email: req.body.email,
   }).exec();
@@ -86,6 +84,4 @@ router.post("/login", async (req, res) => {
   if (!userExist) {
     return sendResponse(res, false, 401, "user does not exist");
   }
-});
-
-module.exports = router;
+};
