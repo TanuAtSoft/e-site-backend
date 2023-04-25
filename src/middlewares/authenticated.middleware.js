@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const sendResponse = require("../helpers/requestHandlerHelper");
+const {sendResponse} = require("../helpers/requestHandlerHelper");
 
 const authenticated = async (req, res, next) => {
   try {
