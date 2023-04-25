@@ -37,11 +37,13 @@ const authRoutes = require("./src/routes/auth.routes");
 const uploadRoutes = require("./src/routes/upload.routes");
 const productRoutes = require("./src/routes/product.routes");
 const cartRoutes = require("./src/routes/cart.route")
+const addressRoutes = require("./src/routes/address.routes")
 
 app.use("/", authRoutes);
 app.use("/", uploadRoutes);
 app.use("/", productRoutes);
 app.use("/", cartRoutes);
+app.use("/", addressRoutes);
 
 app.listen(port, () => {
   console.log(`app is running at ${port}`);

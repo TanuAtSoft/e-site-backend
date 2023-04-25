@@ -1,18 +1,22 @@
 const jwt = require("jsonwebtoken");
-const {sendResponse} = require("../helpers/requestHandlerHelper");
+const { sendResponse } = require("../helpers/requestHandlerHelper");
 
 const authenticated = async (req, res, next) => {
   try {
     if (!req.headers.authorization) {
       return sendResponse(res, false, 401, "Access token not found");
     } else {
-        const token = req.headers.authorization.split(" ");
-        req.user =  await jwt.verify(token[1].trim(),process.env.ACCESS_TOKEN_SECRET)
+      const token = req.headers.authorization.split(" ");
+      req.user = await jwt.verify(
+        token[1].trim(),
+        process.env.ACCESS_TOKEN_SECRET
+      );
+      // console.log("req.user", req.user);
       next();
     }
   } catch (error) {
     next(error);
-    console.log("error",error)
+    return sendResponse(res, false, 401, "invalid token");
   }
 };
 
@@ -21,7 +25,6 @@ const authorize = (roles) => {
   return (req, res, next) => {
     // console.log("req.user", req.user)
     if (!roles.includes(req.user.role)) {
-
       return res.status(401).json({
         status: false,
         statusCode: 401,

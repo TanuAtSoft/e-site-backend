@@ -35,10 +35,12 @@ const UserSchema = new mongoose.Schema({
       ref: "Order",
     },
   ],
-  address:{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Address",
-  },
+  address: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Address",
+    },
+  ],
 });
 
 // UserSchema.pre('save', async function (next) {
