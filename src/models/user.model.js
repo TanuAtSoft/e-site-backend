@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-var createError = require('http-errors')
-const { roles } = require("../utils/constants");
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+var createError = require("http-errors");
+const { roles } = require("../utils/userEnum");
 
 const UserSchema = new mongoose.Schema({
-  name:{
-    type:String,
-    required:true
+  name: {
+    type: String,
+    required: true,
   },
   email: {
     type: String,
@@ -22,6 +22,22 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: [roles.admin, roles.buyer, roles.seller],
     default: roles.buyer,
+  },
+  cart: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+    },
+  ],
+  orders: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order",
+    },
+  ],
+  address:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Address",
   },
 });
 
@@ -45,10 +61,8 @@ UserSchema.methods.isValidPassword = async function (password) {
   try {
     return await bcrypt.compare(password, this.password);
   } catch (error) {
-    throw next(createError(401, 'password doesnot match'))
+    throw next(createError(401, "password doesnot match"));
   }
 };
 
-// const User = mongoose.model('user', UserSchema);
-// module.exports = User;
 module.exports = mongoose.model("User", UserSchema);

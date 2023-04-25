@@ -3,7 +3,7 @@ const { sendResponse } = require("../helpers/requestHandlerHelper");
 
 exports.getProducts = async (req, res, next) => {
     try {
-      const products = await Product.find()
+      const products = await Product.find().populate("seller","name")
   
       return sendResponse(res, true, 200, "Products found successfully", {
         products
@@ -17,7 +17,7 @@ exports.getProducts = async (req, res, next) => {
     console.log("req.params.id",req.params.id)
   
     try {
-      const product = await Product.findById(req.params.id) 
+      const product = await Product.findById(req.params.id).populate("seller","name")
   
       return sendResponse(res, true, 200, "Product found successfully", {
         product
@@ -26,6 +26,7 @@ exports.getProducts = async (req, res, next) => {
       next(error);
     }
   }
+
   exports.addProduct =  async (req, res, next) => {
     const product = new Product({
       title: req.body.title,

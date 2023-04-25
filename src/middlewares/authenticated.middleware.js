@@ -12,6 +12,7 @@ const authenticated = async (req, res, next) => {
     }
   } catch (error) {
     next(error);
+    console.log("error",error)
   }
 };
 
@@ -24,7 +25,7 @@ const authorize = (roles) => {
       return res.status(401).json({
         status: false,
         statusCode: 401,
-        statusMessage: "Only seller can add the products",
+        statusMessage: "Not authorized to perform this action",
       });
     }
     next();

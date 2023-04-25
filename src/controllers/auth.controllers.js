@@ -2,7 +2,8 @@ const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { sendResponse } = require("../helpers/requestHandlerHelper");
-const { roles } = require("../utils/constants");
+const { roles } = require("../utils/userEnum");
+
 
 exports.register = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
