@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const { sendResponse } = require("../helpers/requestHandlerHelper");
 const { roles } = require("../utils/userEnum");
 
-
 exports.register = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
   try {
@@ -58,11 +57,15 @@ exports.login = async (req, res) => {
           },
           process.env.ACCESS_TOKEN_SECRET
         );
+
         const user = {
           user: userExist.name,
           token: accessToken,
           role: userExist.role,
+          cart: userExist.cart.length,
+          address: userExist.address.length
         };
+
         return sendResponse(
           // res.cookie("access_token", accessToken, {
           //   httpOnly: true,
