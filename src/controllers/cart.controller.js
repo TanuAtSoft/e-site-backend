@@ -5,8 +5,10 @@ exports.addToCart = async (req, res, next) => {
   try {
     const data = await User.findByIdAndUpdate(
       { _id: req.user._id },
-      { $addToSet: { cart: req.body.productId } }
+      { $push: { cart: req.body.productId } }
     );
+    // data.cart.push(req.body.productId)
+     console.log("data", data.cart)
     return sendResponse(res, true, 200, "product added to cart");
   } catch (err) {
     return sendResponse(res, false, 401, err);
