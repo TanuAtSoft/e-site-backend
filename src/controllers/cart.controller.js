@@ -20,7 +20,7 @@ exports.addToCart = async (req, res, next) => {
 exports.getCart = async (req, res, next) => {
   try {
     const user = await User.findById({ _id: req.user._id }).populate("cart");
-     //console.log("req.user", user);
+    //console.log("req.user", user);
     const cartDetails = user.cart;
     //console.log("cartDetails", cartDetails);
     // try {
@@ -35,5 +35,17 @@ exports.getCart = async (req, res, next) => {
     return sendResponse(res, true, 200, "cart details", cartDetails);
   } catch (err) {
     return sendResponse(res, false, 401, err);
+  }
+};
+
+exports.deleteCart = async (req, res) => {
+  try {
+    const data = await User.findByIdAndUpdate(
+      { _id: req.user._id },
+      { $pull: { cart: req.body.productId } }
+    );
+    return sendResponse(res, true, 200, "cart details", data.cart);
+  } catch (err) {
+    return sendResponse(res, false, 400, "something went wrong", err);
   }
 };

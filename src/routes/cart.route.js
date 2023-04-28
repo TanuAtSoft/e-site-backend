@@ -7,17 +7,24 @@ const {
 } = require("../middlewares/authenticated.middleware");
 
 router.patch(
-    "/addToCart",
-    authenticated,
-    authorize(["BUYER"]),
-    cartController.addToCart
-  );
+  "/addToCart",
+  authenticated,
+  authorize(["BUYER"]),
+  cartController.addToCart
+);
 
-  router.get(
-    "/getCart",
-    authenticated,
-    authorize(["BUYER"]),
-    cartController.getCart
-  );
+router.get(
+  "/getCart",
+  authenticated,
+  authorize(["BUYER"]),
+  cartController.getCart
+);
 
-  module.exports = router;
+router.put(
+  "/deleteCartItem",
+  authenticated,
+  authorize(["BUYER"]),
+  cartController.deleteCart
+);
+
+module.exports = router;
