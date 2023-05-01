@@ -24,7 +24,7 @@ router.put(
   "/deleteCartItem",
   authenticated,
   authorize(["BUYER"]),
-  cartController.deleteCart
+  cartController.removeItemFromCart
 );
 
 module.exports = router;
