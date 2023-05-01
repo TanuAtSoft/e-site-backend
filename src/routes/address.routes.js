@@ -3,7 +3,7 @@ const router = express.Router();
 const addressController = require("../controllers/address.controller");
 const { authenticated } = require("../middlewares/authenticated.middleware");
 
-router.patch(
+router.post(
   "/addAddress",
   authenticated,
   addressController.addAdress
