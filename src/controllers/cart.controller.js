@@ -1,6 +1,7 @@
 const { sendResponse } = require("../helpers/requestHandlerHelper");
 const User = require("../models/user.model");
 const Cart = require("../models/cart.model");
+const Product = require("../models/product.model");
 
 exports.addToCart = async (req, res, next) => {
   try {
@@ -16,14 +17,15 @@ exports.addToCart = async (req, res, next) => {
     }
 
     if (!itemExist) {
+      const product = await Product.findById({ _id: req.body.productId });
       const newCart = new Cart({
         productId: req.body.productId,
         quantity: 1,
-        title: req.body.title,
-        brand: req.body.brand,
-        image: req.body.image,
-        price: req.body.price,
-        seller: req.body.seller,
+        title: product.title,
+        brand: product.brand,
+        image: product.images[0],
+        price: product.price,
+        seller: product.seller,
         buyer: req.user._id,
       });
       console.log("neCart", newCart);
