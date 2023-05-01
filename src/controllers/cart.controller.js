@@ -28,7 +28,7 @@ exports.addToCart = async (req, res, next) => {
         seller: product.seller,
         buyer: req.user._id,
       });
-      console.log("neCart", newCart);
+
       await newCart.save();
       const user = await User.findByIdAndUpdate(
         { _id: req.user._id },
@@ -78,6 +78,28 @@ exports.removeItemFromCart = async (req, res) => {
     }
     if (!itemExist) {
       return sendResponse(res, true, 200, "No item found in the user's cart");
+    }
+  } catch (err) {
+    return sendResponse(res, false, 401, err);
+  }
+};
+
+exports.deleteItemFromCart = async (req, res) => {
+  try {
+    const itemExist = await Cart.findOne({
+      $and: [
+        { buyer: { _id: req.user._id } },
+        { productId: req.body.productId },
+      ],
+    });
+    if (itemExist) {
+      const user = await User.findByIdAndUpdate(
+        { _id: req.user._id },
+        { $pull: { cart: itemExist._id } }
+      );
+      await user.save();
+      await Cart.findByIdAndRemove({ _id: itemExist._id });
+      return sendResponse(res, true, 200, "Item removed successfully");
     }
   } catch (err) {
     return sendResponse(res, false, 401, err);

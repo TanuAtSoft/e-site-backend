@@ -27,4 +27,11 @@ router.put(
   cartController.removeItemFromCart
 );
 
+router.delete(
+  "/deleteItemFromCart",
+  authenticated,
+  authorize(["BUYER"]),
+  cartController.deleteItemFromCart
+);
+
 module.exports = router;
