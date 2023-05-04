@@ -12,10 +12,6 @@ const OrderSchema = new mongoose.Schema({
       ref: "Product",
     },
   ],
-  seller: {
-    type: mongoose.SchemaTypes.ObjectId,
-    ref: "User",
-  },
   status: {
     type: String,
     enum: [
