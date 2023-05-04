@@ -23,7 +23,10 @@ const OrderSchema = new mongoose.Schema({
     ],
     default: status.ordered,
   },
-  timestamps: { createdAt: "addedAt", updatedAt: "modifiedAt" },
+ createdAt: {
+  type:Date,
+   default: Date.now()},
+ updateAt: Date
 });
 
 module.exports = mongoose.model("Order", OrderSchema);

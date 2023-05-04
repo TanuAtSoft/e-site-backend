@@ -17,14 +17,16 @@ exports.orders=  async (req, res) => {
 
 		instance.orders.create(options, (error, order) => {
 			if (error) {
-				console.log(error);
-				return res.status(500).json({ message: "Something Went Wrong!" });
+				return sendResponse(res, false, 500, "something went wrong", {
+					error
+				});
 			}
 			res.status(200).json({ data: order });
 		});
 	} catch (error) {
-		res.status(500).json({ message: "Internal Server Error!" });
-		console.log(error);
+		return sendResponse(res, false, 500, "internal server error", {
+			error
+		});
 	}
 }
 
@@ -39,12 +41,14 @@ exports.verify= async (req, res) => {
 			.digest("hex");
 
 		if (razorpay_signature === expectedSign) {
-			return res.status(200).json({ message: "Payment verified successfully" });
+			 return sendResponse(res, true, 200, "payment verified successfully");
 		} else {
-			return res.status(400).json({ message: "Invalid signature sent!" });
+			return sendResponse(res, false, 400, "Invalid Signature sent");
 		}
 	} catch (error) {
-		res.status(500).json({ message: "Internal Server Error!" });
-		console.log(error);
+	  return	sendResponse(res, false, 500, "internal server error", {
+			error
+		});
+		
 	}
 }
