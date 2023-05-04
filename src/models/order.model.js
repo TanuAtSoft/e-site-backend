@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const { status } = require("../utils/statusEnum");
 
 const OrderSchema = new mongoose.Schema({
+  orderId:{
+   type:String,
+   required:true
+  },
   orderedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

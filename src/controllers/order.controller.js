@@ -9,6 +9,7 @@ exports.order = async (req, res) => {
         const data = await User.findById(req.user._id);
         const d = data.cart;
         const newOrder = new Order({
+            orderId: req.body.orderId,
             orderedBy: req.user._id,
             orderedItems: d,
         });

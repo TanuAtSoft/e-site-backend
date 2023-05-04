@@ -42,7 +42,8 @@ exports.verify= async (req, res) => {
 			.digest("hex");
 
 		if (razorpay_signature === expectedSign) {
-			 return sendResponse(res, true, 200, "payment verified successfully");
+			const data ={orderId: razorpay_order_id}
+			 return sendResponse(res, true, 200, "payment verified successfully",data);
 		} else {
 			return sendResponse(res, false, 400, "Invalid Signature sent");
 		}
