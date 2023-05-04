@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+
 mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -36,14 +37,16 @@ app.use(cookieParser());
 const authRoutes = require("./src/routes/auth.routes");
 const uploadRoutes = require("./src/routes/upload.routes");
 const productRoutes = require("./src/routes/product.routes");
-const cartRoutes = require("./src/routes/cart.route")
-const addressRoutes = require("./src/routes/address.routes")
+const cartRoutes = require("./src/routes/cart.route");
+const addressRoutes = require("./src/routes/address.routes");
+const orderRoutes = require("./src/routes/order.routes")
 
 app.use("/", authRoutes);
 app.use("/", uploadRoutes);
 app.use("/", productRoutes);
 app.use("/", cartRoutes);
 app.use("/", addressRoutes);
+app.use("/", orderRoutes);
 
 app.listen(port, () => {
   console.log(`app is running at ${port}`);
