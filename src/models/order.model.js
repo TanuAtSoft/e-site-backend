@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 const { status } = require("../utils/statusEnum");
 
 const OrderSchema = new mongoose.Schema({
-  orderId:{
-   type:String,
-   required:true
+  orderId: {
+    type: String,
+    required: true
   },
   orderedBy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -16,6 +16,10 @@ const OrderSchema = new mongoose.Schema({
       ref: "Product",
     },
   ],
+  deliveryAddress: {
+    Type: String,
+    required: true
+  },
   status: {
     type: String,
     enum: [
@@ -27,10 +31,11 @@ const OrderSchema = new mongoose.Schema({
     ],
     default: status.ordered,
   },
- createdAt: {
-  type:Date,
-   default: Date.now()},
- updateAt: Date
+  createdAt: {
+    type: Date,
+    default: Date.now()
+  },
+  updatedAt: Date
 });
 
 module.exports = mongoose.model("Order", OrderSchema);
