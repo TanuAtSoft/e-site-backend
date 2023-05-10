@@ -17,8 +17,8 @@ const OrderSchema = new mongoose.Schema({
     },
   ],
   deliveryAddress: {
-    Type: String,
-    required: true
+    type: String,
+    required:true
   },
   status: {
     type: String,
@@ -35,7 +35,10 @@ const OrderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now()
   },
-  updatedAt: Date
+  updatedAt: {
+    type:Date,
+     default: Date.now()   
+  }
 });
 
 module.exports = mongoose.model("Order", OrderSchema);

@@ -12,8 +12,7 @@ exports.order = async (req, res) => {
             orderId: req.body.orderId,
             orderedBy: req.user._id,
             orderedItems: d,
-            deliveryAddress: req.body.deliveryAddress,
-            updatedAt: Date.now()
+            deliveryAddress: req.body.deliveryAddress
         });
         await newOrder.save();
         await data.updateOne(
