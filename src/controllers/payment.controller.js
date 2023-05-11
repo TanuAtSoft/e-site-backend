@@ -10,8 +10,8 @@ exports.orders=  async (req, res) => {
 		});
 
 		const options = {
-			amount: req.body.amount * 100,
-            //amount: req.body.amount ,
+			//amount: 2000,
+            amount: req.body.amount * 100,
 			currency: "INR",
 			receipt: crypto.randomBytes(10).toString("hex"),
 		};

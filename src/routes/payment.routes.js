@@ -6,10 +6,9 @@ const {
   } = require("../middlewares/authenticated.middleware");
 
 
-router.post("/createOrder",   authenticated,
-authorize(["BUYER"]),orderController.orders);
+router.post("/createOrder", authenticated, 
+orderController.orders);
 
-router.post("/verifypayment",  authenticated,
-authorize(["BUYER"]), orderController.verify);
+router.post("/verifypayment", authenticated, orderController.verify);
 
 module.exports = router;

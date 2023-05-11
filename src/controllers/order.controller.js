@@ -24,7 +24,7 @@ exports.order = async (req, res) => {
         });
 
         const data2 = await Order.find(newOrder._id);
-        return sendResponse(res, true, 200, "Product found successfully", {
+        return sendResponse(res, true, 200, "Your Order has been successfully placed", {
             data2
         });
     } catch (err) {
