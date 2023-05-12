@@ -12,13 +12,37 @@ const OrderSchema = new mongoose.Schema({
   },
   orderedItems: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
+      productId: {
+        type: String,
+      },
+      quantity: {
+        type: Number,
+      },
+      title: {
+        type: String,
+      },
+      brand: {
+        type: String,
+      },
+      image: {
+        type: String,
+      },
+      price: {
+        type: String,
+      },
+      seller: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "User",
+      },
+      buyer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
     },
   ],
   deliveryAddress: {
     type: String,
-    required:true
+    required: true
   },
   status: {
     type: String,
@@ -36,8 +60,8 @@ const OrderSchema = new mongoose.Schema({
     default: Date.now()
   },
   updatedAt: {
-    type:Date,
-     default: Date.now()   
+    type: Date,
+    default: Date.now()
   }
 });
 

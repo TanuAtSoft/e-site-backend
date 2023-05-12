@@ -17,6 +17,7 @@ exports.addToCart = async (req, res, next) => {
     }
 
     if (!itemExist) {
+      const user = await User.findById({_id: req.user._id})
       const product = await Product.findById({ _id: req.body.productId });
       const newCart = new Cart({
         productId: req.body.productId,
@@ -30,10 +31,11 @@ exports.addToCart = async (req, res, next) => {
       });
 
       await newCart.save();
-      const user = await User.findByIdAndUpdate(
-        { _id: req.user._id },
-        { $addToSet: { cart: newCart } }
-      );
+      await user.cart.push(newCart)
+      // const user = await User.findByIdAndUpdate(
+      //   { _id: req.user._id },
+      //   { $push: { cart: newCart } }
+      // );
       await user.save();
     }
     return sendResponse(res, true, 200, "product added to cart");
