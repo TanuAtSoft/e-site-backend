@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { status } = require("../utils/statusEnum");
 
 const CartSchema = new mongoose.Schema({
   productId: {
@@ -31,6 +32,17 @@ const CartSchema = new mongoose.Schema({
   buyer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+  },
+  status: {
+    type: String,
+    enum: [
+      status.ordered,
+      status.inProcess,
+      status.shipped,
+      status.inTransit,
+      status.delivered,
+    ],
+    default: status.ordered,
   },
 });
 

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { payment } = require("../utils/paymentEnum");
 const { status } = require("../utils/statusEnum");
 
 const OrderSchema = new mongoose.Schema({
@@ -38,22 +39,28 @@ const OrderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
+      status:{
+        type: String,
+        enum: [
+          status.ordered,
+          status.inProcess,
+          status.shipped,
+          status.inTransit,
+          status.delivered,
+        ],
+      }
     },
   ],
   deliveryAddress: {
     type: String,
     required: true
   },
-  status: {
+  paymentStatus: {
     type: String,
     enum: [
-      status.ordered,
-      status.inProcess,
-      status.shipped,
-      status.inTransit,
-      status.delivered,
+      payment.prepaid,
+      payment.cod
     ],
-    default: status.ordered,
   },
   createdAt: {
     type: Date,

@@ -14,8 +14,7 @@ exports.getProducts = async (req, res, next) => {
   }
 
   exports.getSingleProduct =  async (req, res, next) => {
-    console.log("req.params.id",req.params.id)
-  
+
     try {
       const product = await Product.findById(req.params.id).populate("seller","name")
   

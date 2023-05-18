@@ -7,11 +7,13 @@ const {
 
 
 router.post("/saveOrder", authenticated,
-    authorize(["BUYER"]), orderController.order);
+    authorize(["BUYER"]), orderController.createOrder);
     
     router.get("/getOrders",orderController.getAllOrders)
 
-router.get("/getOrderInfo", authenticated, orderController.seller_order_info)
+router.get("/getOrderInfo",authenticated,orderController.seller_order_info)
+
+router.patch("/updateOrderStatus", orderController.update_Order_Info)
 
 
 module.exports = router;
