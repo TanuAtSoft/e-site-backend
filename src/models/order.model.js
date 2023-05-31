@@ -11,6 +11,9 @@ const OrderSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  buyerName:{
+  type:String,
+  },
   orderedItems: [
     {
       productId: {
@@ -55,8 +58,7 @@ const OrderSchema = new mongoose.Schema({
     },
   ],
   deliveryAddress: {
-    type: String,
-    required: true
+    type: String
   },
   paymentStatus: {
     type: String,
