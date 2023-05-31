@@ -68,14 +68,22 @@ exports.seller_order_info = async (req, res) => {
 };
 
 exports.update_Order_Info = async (req,res) =>{
+  console.log("req.body.status",req.body.status)
+  console.log("_id",req.body.orderObjectId)
+  console.log("orderedItems._id",req.body.itemId)
+  console.log("shipping details", req.body.shippingDetails)
   try{
    await Order.findOneAndUpdate({
-      "_id": "6465f4925560ee0a22110e2b", 
-      "orderedItems._id": "6465f4635560ee0a22110e1a"  
+    //"_id": "6465f4925560ee0a22110e2b", 
+    //"orderedItems._id": "6465f4635560ee0a22110e1a" 
+      "_id": req.body.orderObjectId, 
+      "orderedItems._id": req.body.itemId 
     },
     {
       $set: {
-        "orderedItems.$.status": "ORDERED"
+        "orderedItems.$.status": req.body.status,
+        "orderedItems.$.shippingDetails": req.body.shippingDetails? req.body.shippingDetails :""
+        
       }
     },
     {
@@ -85,6 +93,6 @@ exports.update_Order_Info = async (req,res) =>{
 
   }
   catch(e){
-    console.log("e")
+    console.log("e",e)
   }
 }
