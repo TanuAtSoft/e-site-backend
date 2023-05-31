@@ -54,6 +54,7 @@ exports.login = async (req, res) => {
             email: userExist.email,
             _id: userExist._id,
             role: userExist.role,
+            name: userExist.name
           },
           process.env.ACCESS_TOKEN_SECRET
         );

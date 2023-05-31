@@ -14,7 +14,7 @@ exports.createOrder = async (req, res) => {
     });
     const newOrder = new Order({
       orderId: req.body.orderId,
-      orderedBy: req.user._id,
+      orderedBy: req.user.name,
       orderedItems: d,
       deliveryAddress: req.body.deliveryAddress,
       paymentStatus: req.body.isCod ? "COD":"PREPAID" 

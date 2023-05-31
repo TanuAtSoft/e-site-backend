@@ -48,6 +48,9 @@ const OrderSchema = new mongoose.Schema({
           status.inTransit,
           status.delivered,
         ],
+      },
+      shippingDetails:{
+        type:String,
       }
     },
   ],

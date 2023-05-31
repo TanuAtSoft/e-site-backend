@@ -13,7 +13,7 @@ router.post("/saveOrder", authenticated,
 
 router.get("/getOrderInfo",authenticated,orderController.seller_order_info)
 
-router.patch("/updateOrderStatus", orderController.update_Order_Info)
+router.patch("/updateOrderStatus",authenticated, orderController.update_Order_Info)
 
 
 module.exports = router;
