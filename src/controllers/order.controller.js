@@ -18,7 +18,7 @@ exports.createOrder = async (req, res) => {
       buyerName: req.user.name,
       orderedItems: d,
       deliveryAddress: req.body.deliveryAddress,
-      paymentStatus: req.body.isCod ? "COD":"PREPAID" 
+      paymentStatus: req.body.isCod ? "COD" : "PREPAID",
     });
     await newOrder.save();
     await data.updateOne({ $push: { orders: newOrder._id } }, { multi: true });
@@ -67,32 +67,38 @@ exports.seller_order_info = async (req, res) => {
   }
 };
 
-exports.update_Order_Info = async (req,res) =>{
-  console.log("req.body.status",req.body.status)
-  console.log("_id",req.body.orderObjectId)
-  console.log("orderedItems._id",req.body.itemId)
-  console.log("shipping details", req.body.shippingDetails)
-  try{
-   await Order.findOneAndUpdate({
-    //"_id": "6465f4925560ee0a22110e2b", 
-    //"orderedItems._id": "6465f4635560ee0a22110e1a" 
-      "_id": req.body.orderObjectId, 
-      "orderedItems._id": req.body.itemId 
-    },
-    {
-      $set: {
-        "orderedItems.$.status": req.body.status,
-        "orderedItems.$.shippingDetails": req.body.shippingDetails? req.body.shippingDetails :""
-        
+exports.update_Order_Info = async (req, res) => {
+  try {
+    await Order.findOneAndUpdate(
+      {
+        _id: req.body.orderObjectId,
+        "orderedItems._id": req.body.itemId,
+      },
+      {
+        $set: {
+          "orderedItems.$.status": req.body.status,
+          "orderedItems.$.shippingDetails": req.body.shippingDetails
+            ? req.body.shippingDetails
+            : "",
+        },
+      },
+      {
+        multi: false,
       }
-    },
-    {
-      multi: false
-    })
-    return sendResponse(res, true, 200, "Updated order status successfully")
+    );
+    return sendResponse(res, true, 200, "Updated order status successfully");
+  } catch (e) {
+    return sendResponse(res, false, 401, "Something went wrong");
+  }
+};
 
+exports.buyer_Order_Info = async (req, res) => {
+  try {
+    const data = await Order.find({
+      orderedBy: req.user._id,
+    });
+    return sendResponse(res, true, 200, "orders found succesfully", data);
+  } catch (e) {
+    return sendResponse(res, false, 401, "Something went wrong");
   }
-  catch(e){
-    console.log("e",e)
-  }
-}
+};
