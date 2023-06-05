@@ -42,6 +42,7 @@ const cartRoutes = require("./src/routes/cart.route");
 const addressRoutes = require("./src/routes/address.routes");
 const paymentRoutes = require("./src/routes/payment.routes")
 const orderRoutes = require("./src/routes/order.routes")
+const categoryRoutes = require("./src/routes/category.routes")
 
 app.use("/", authRoutes);
 app.use("/", uploadRoutes);
@@ -50,6 +51,7 @@ app.use("/", cartRoutes);
 app.use("/", addressRoutes);
 app.use("/", orderRoutes);
 app.use("/", paymentRoutes);
+app.use("/", categoryRoutes);
 
 app.listen(port, () => {
   console.log(`app is running at ${port}`);

@@ -17,4 +17,18 @@ router.post(
   authorize(["SELLER", "ADMIN"]),
   productController.addProduct
 );
+
+router.patch(
+  "/editProduct/:id",
+  authenticated,
+  authorize(["SELLER", "ADMIN"]),
+  productController.editProduct
+);
+module.exports = router;
+productController.editProduct;
+
+router.get(
+  "/getProductByCategory",
+  productController.getProductByCategory
+);
 module.exports = router;
