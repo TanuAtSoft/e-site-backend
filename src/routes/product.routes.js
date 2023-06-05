@@ -11,7 +11,7 @@ router.get("/products", productController.getProducts);
 
 router.get("/product/:id", productController.getSingleProduct);
 
-router.patch(
+router.post(
   "/addProducts",
   authenticated,
   authorize(["SELLER", "ADMIN"]),
