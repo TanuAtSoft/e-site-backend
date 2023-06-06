@@ -23,7 +23,7 @@ exports.deleteWishlist = async (req, res) => {
   try {
     await User.findByIdAndUpdate(
       { _id: req.user._id },
-      { $pull: { wishlist: {_id:req.body.productId }} }
+      { $pull: { wishlist: req.body.productId } }
     );
     return sendResponse(
       res,
