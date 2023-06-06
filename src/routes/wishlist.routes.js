@@ -16,7 +16,7 @@ router.get(
     "/getWishlistLength",
     authenticated,
     authorize(["BUYER"]),
-    cartController.getWishlistLength
+    wishlistController.getWishlistLength
   );
 
   router.patch(

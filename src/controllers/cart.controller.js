@@ -56,7 +56,13 @@ exports.getCart = async (req, res, next) => {
 exports.getCartLength = async (req, res, next) => {
   try {
     const user = await User.findById({ _id: req.user._id });
-    const cartLength = user.cart.length;
+    let cartLength;
+    if(user.cart){
+      cartLength = user.cart.length;
+    }
+    else{
+   cartLength = 0;
+    }
     return sendResponse(res, true, 200, "cart details", cartLength);
   } catch (err) {
     return sendResponse(res, false, 401, err);

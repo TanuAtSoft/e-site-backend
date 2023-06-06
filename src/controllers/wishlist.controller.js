@@ -48,7 +48,13 @@ exports.getWishlist = async (req, res) => {
 exports.getWishlistLength = async (req, res) => {
   try {
    const data = await User.findById({ _id: req.user._id });
-   const wishlistLength = data.wishlist.length
+   let wishlistLength;
+   if(data.wishlist){
+    wishlistLength = data.wishlist.length
+   }
+   else{
+    wishlistLength =0
+   }
     return sendResponse(res, true, 200, "wishlist found successfully",wishlistLength);
   } catch (err) {
     return sendResponse(res, false, 400, err.message);
