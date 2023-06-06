@@ -64,7 +64,8 @@ exports.login = async (req, res) => {
           token: accessToken,
           role: userExist.role,
           cart: userExist.cart.length,
-          address: userExist.address.length
+          address: userExist.address.length,
+          wishlist: userExist.wishlist.length
         };
 
         return sendResponse(
