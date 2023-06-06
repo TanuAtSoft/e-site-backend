@@ -39,8 +39,17 @@ exports.deleteWishlist = async (req, res) => {
 exports.getWishlist = async (req, res) => {
   try {
    const data = await User.findById({ _id: req.user._id }).populate("wishlist");
-   const widhlistData = data.wishlist
-    return sendResponse(res, true, 200, "wishlist found successfully",widhlistData);
+   const wishlistData = data.wishlist
+    return sendResponse(res, true, 200, "wishlist found successfully",wishlistData);
+  } catch (err) {
+    return sendResponse(res, false, 400, err.message);
+  }
+};
+exports.getWishlistLength = async (req, res) => {
+  try {
+   const data = await User.findById({ _id: req.user._id });
+   const wishlistLength = data.wishlist.length
+    return sendResponse(res, true, 200, "wishlist found successfully",wishlistLength);
   } catch (err) {
     return sendResponse(res, false, 400, err.message);
   }

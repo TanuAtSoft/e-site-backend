@@ -19,6 +19,12 @@ router.get(
   authorize(["BUYER"]),
   cartController.getCart
 );
+router.get(
+  "/getCartLength",
+  authenticated,
+  authorize(["BUYER"]),
+  cartController.getCartLength
+);
 
 router.put(
   "/deleteCartItem",

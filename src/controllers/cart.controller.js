@@ -53,6 +53,15 @@ exports.getCart = async (req, res, next) => {
     return sendResponse(res, false, 401, err);
   }
 };
+exports.getCartLength = async (req, res, next) => {
+  try {
+    const user = await User.findById({ _id: req.user._id });
+    const cartLength = user.cart.length;
+    return sendResponse(res, true, 200, "cart details", cartLength);
+  } catch (err) {
+    return sendResponse(res, false, 401, err);
+  }
+};
 
 exports.removeItemFromCart = async (req, res) => {
   try {
