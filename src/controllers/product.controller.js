@@ -103,10 +103,10 @@ exports.softDeleteSingleProduct = async (req, res, next) => {
     const product = await Product.findById(req.params.id);
     if(product){
       product.softDeleted = true;
+      await product.save()
       return sendResponse(res, true, 200, "Product deleted successfully");
     }
     if(!product){
-      product.softDeleted = true;
       return sendResponse(res, true, 200, "Product cannot be found");
     }
   } catch (error) {
