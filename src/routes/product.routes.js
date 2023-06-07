@@ -23,11 +23,11 @@ router.patch(
   authorize(["SELLER", "ADMIN"]),
   productController.editProduct
 );
-router.delete(
-  "/deleteProduct/:id",
+router.patch(
+  "/softDeleteProduct/:id",
   authenticated,
   authorize(["SELLER", "ADMIN"]),
-  productController.deleteSingleProduct
+  productController.softDeleteSingleProduct
 );
 router.get("/getProductByCategory", productController.getProductByCategory);
 router.get(

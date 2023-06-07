@@ -98,10 +98,17 @@ exports.getProductsByUser = async (req, res, next) => {
   }
 };
 
-exports.deleteSingleProduct = async (req, res, next) => {
+exports.softDeleteSingleProduct = async (req, res, next) => {
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
-    return sendResponse(res, true, 200, "Product deleted successfully");
+    const product = await Product.findById(req.params.id);
+    if(product){
+      product.softDeleted = true;
+      return sendResponse(res, true, 200, "Product deleted successfully");
+    }
+    if(!product){
+      product.softDeleted = true;
+      return sendResponse(res, true, 200, "Product cannot be found");
+    }
   } catch (error) {
     next(error);
   }
