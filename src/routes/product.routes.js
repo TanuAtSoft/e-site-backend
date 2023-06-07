@@ -27,8 +27,11 @@ router.patch(
 module.exports = router;
 productController.editProduct;
 
+router.get("/getProductByCategory", productController.getProductByCategory);
 router.get(
-  "/getProductByCategory",
-  productController.getProductByCategory
+  "/getProductByUser",
+  authenticated,
+  authorize(["SELLER", "ADMIN"]),
+  productController.getProductsByUser
 );
 module.exports = router;

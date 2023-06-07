@@ -59,17 +59,36 @@ exports.editProduct = async (req, res, next) => {
 
     // data.cart.push(res.body.postId)
   } catch (err) {
-    return sendResponse(res, flase, 400,"something went wrong");
+    return sendResponse(res, flase, 400, "something went wrong");
   }
 };
 
 exports.getProductByCategory = async (req, res, next) => {
   try {
-    const products = await Product.find({"category": req.body.category}).populate("seller", "name");
+    const products = await Product.find({
+      category: req.body.category,
+    }).populate("seller", "name");
     return sendResponse(res, true, 200, "Products found successfully", {
       products,
     });
   } catch (error) {
     next(error);
+  }
+};
+
+exports.getProductsByUser = async (req, res, next) => {
+  console.log("req.user._id", req.user._id);
+  try {
+    const products = await Product.find({ seller: req.user._id });
+
+    return sendResponse(
+      res,
+      true,
+      200,
+      "Products found successfully",
+      products
+    );
+  } catch (error) {
+    console.log(error);
   }
 };
