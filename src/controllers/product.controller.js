@@ -3,7 +3,7 @@ const { sendResponse } = require("../helpers/requestHandlerHelper");
 
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find().populate("seller", "name");
+    const products = await Product.find({softDeleted: false}).populate("seller", "name");
 
     return sendResponse(res, true, 200, "Products found successfully", {
       products,
@@ -36,6 +36,7 @@ exports.addProduct = async (req, res, next) => {
     images: req.body.images,
     description: req.body.description,
     price: req.body.price,
+    stock: req.body.stock,
     seller: req.user._id,
   });
 
@@ -52,7 +53,12 @@ exports.editProduct = async (req, res, next) => {
         (product.category = req.body.category),
         (product.images = req.body.images),
         (product.description = req.body.description),
+        (product.stock = req.body.stock),
+        (product.softDeleted = req.body.softDeleted
+          ? req.body.softDeleted
+          : false),
         (product.price = req.body.price);
+
       await product.save();
       return sendResponse(res, true, 200, "product edited successfully");
     }

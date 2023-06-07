@@ -22,6 +22,20 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  softDeleted:{
+    type: Boolean,
+    enum: [true,false],
+    default: false,
+  },
+  discounts:{
+    type:Number
+  },
+  stock:{
+   type:Number
+  },
+  ratings:{
+    type:Number
+  },
   seller: {
     type: mongoose.SchemaTypes.ObjectId,
     ref: "User",
