@@ -77,7 +77,6 @@ exports.getProductByCategory = async (req, res, next) => {
 };
 
 exports.getProductsByUser = async (req, res, next) => {
-  console.log("req.user._id", req.user._id);
   try {
     const products = await Product.find({ seller: req.user._id });
 
@@ -90,5 +89,16 @@ exports.getProductsByUser = async (req, res, next) => {
     );
   } catch (error) {
     console.log(error);
+  }
+};
+
+exports.deleteSingleProduct = async (req, res, next) => {
+  try {
+    const product = await Product.findByIdAndDelete(req.params.id);
+    return sendResponse(res, true, 200, "Product found successfully", {
+      product,
+    });
+  } catch (error) {
+    next(error);
   }
 };

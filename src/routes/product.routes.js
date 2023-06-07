@@ -24,9 +24,12 @@ router.patch(
   authorize(["SELLER", "ADMIN"]),
   productController.editProduct
 );
-module.exports = router;
-productController.editProduct;
-
+router.delete(
+  "/deleteProduct/:id",
+  authenticated,
+  authorize(["SELLER", "ADMIN"]),
+  productController.deleteSingleProduct
+);
 router.get("/getProductByCategory", productController.getProductByCategory);
 router.get(
   "/getProductByUser",
