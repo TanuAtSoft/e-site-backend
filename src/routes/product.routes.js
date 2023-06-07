@@ -5,7 +5,6 @@ const {
   authorize,
   authenticated,
 } = require("../middlewares/authenticated.middleware");
-const { sendResponse } = require("../helpers/requestHandlerHelper");
 
 router.get("/products", productController.getProducts);
 

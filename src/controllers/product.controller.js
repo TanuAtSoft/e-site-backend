@@ -95,7 +95,7 @@ exports.getProductsByUser = async (req, res, next) => {
 exports.deleteSingleProduct = async (req, res, next) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
-    return sendResponse(res, true, 200, "Product found successfully", {
+    return sendResponse(res, true, 200, "Product deleted successfully", {
       product,
     });
   } catch (error) {
