@@ -5,6 +5,6 @@ const uploadController = require("../controllers/upload.controller")
 
 router.post("/upload/image", uploadController.singleUploader);
 
-router.post("/upload/images", upload.array("images", 10), uploadController.multiUploader);
+router.post("/upload/images", upload.array("images", 6), uploadController.multiUploader);
 
 module.exports = router;
