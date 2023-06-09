@@ -27,4 +27,10 @@ router.get(
   orderController.buyer_Order_Info
 );
 
+router.get(
+  "/getSellerMatricsInfo",
+  authenticated,
+  orderController.seller_metrics_info
+);
+
 module.exports = router;

@@ -102,3 +102,148 @@ exports.buyer_Order_Info = async (req, res) => {
     return sendResponse(res, false, 401, "Something went wrong");
   }
 };
+
+exports.seller_metrics_info = async (req, res) => {
+  try {
+    const itemSold = await Order.aggregate([
+      { $unwind: "$orderedItems" },
+      {
+        $match: {
+          "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+        },
+      },
+      {
+        "$group": {
+            "_id": 0,
+            "items_sold": {
+                "$sum": "$orderedItems.quantity"
+            }
+        }
+    },
+    ]);
+    const ordered = await Order.aggregate([
+      { $unwind: "$orderedItems" },
+      {
+        $match: {
+          $and: [
+            {
+              "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+            },
+            { "orderedItems.status": "ORDERED" },
+          ],
+        },
+      },
+      {
+        "$group": {
+            "_id": 0,
+            "items_ordered": {
+                "$sum": "$orderedItems.quantity"
+            },
+            "revenue_generated": {
+              "$sum": {$multiply: [ "$orderedItems.quantity", "$orderedItems.price" ]}
+          }
+        }
+    },
+    ]);
+    const processed = await Order.aggregate([
+      { $unwind: "$orderedItems" },
+      {
+        $match: {
+          $and: [
+            {
+              "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+            },
+            { "orderedItems.status": "INPROCESS" },
+          ],
+        },
+      },
+      {
+        "$group": {
+            "_id": 0,
+            "items_processed": {
+                "$sum": "$orderedItems.quantity"
+            }
+        }
+    },
+    ]);
+    const shipped = await Order.aggregate([
+      { $unwind: "$orderedItems" },
+      {
+        $match: {
+          $and: [
+            {
+              "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+            },
+            { "orderedItems.status": "SHIPPED" },
+          ],
+        },
+      },
+      {
+        "$group": {
+            "_id": 0,
+            "items_shipped": {
+                "$sum": "$orderedItems.quantity"
+            }
+        }
+    },
+    ]);
+    const transit = await Order.aggregate([
+      { $unwind: "$orderedItems" },
+      {
+        $match: {
+          $and: [
+            {
+              "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+            },
+            { "orderedItems.status": "INTRANSIT" },
+          ],
+        },
+      },
+      {
+        "$group": {
+            "_id": 0,
+            "items_intransit": {
+                "$sum": "$orderedItems.quantity"
+            }
+        }
+    },
+    ]);
+    const delivered = await Order.aggregate([
+      { $unwind: "$orderedItems" },
+      {
+        $match: {
+          $and: [
+            {
+              "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+            },
+            { "orderedItems.status": "DELIVERED" },
+          ],
+        },
+      },
+      {
+        "$group": {
+            "_id": 0,
+            "items_delivered": {
+                "$sum": "$orderedItems.quantity"
+            },
+            "revenue_generated": {
+              "$sum": {$multiply: [ "$orderedItems.quantity", "$orderedItems.price" ]}
+          }
+        }
+    },
+    ]);
+    const data = {
+      ordered: ordered.length>0? ordered[0].items_ordered:0,
+      processed: processed.length>0? processed[0].items_processed:0,
+      shipped: shipped.length >0 ? shipped[0].items_shipped:0,
+      transit: transit.length > 0? transit[0].items_intransit:0,
+      delivered: delivered.length > 0? delivered[0].items_delivered:0,
+      itemSold:itemSold.length > 0? itemSold[0].items_sold:0,
+      test: ordered
+    };
+
+    return sendResponse(res, true, 200, "found orders", data);
+  } catch (e) {
+    return sendResponse(res, false, 400, e);
+  }
+};
