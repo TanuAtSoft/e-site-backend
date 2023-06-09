@@ -138,10 +138,7 @@ exports.seller_metrics_info = async (req, res) => {
             "_id": 0,
             "items_ordered": {
                 "$sum": "$orderedItems.quantity"
-            },
-            "revenue_generated": {
-              "$sum": {$multiply: [ "$orderedItems.quantity", "$orderedItems.price" ]}
-          }
+            }
         }
     },
     ]);
@@ -238,8 +235,8 @@ exports.seller_metrics_info = async (req, res) => {
       shipped: shipped.length >0 ? shipped[0].items_shipped:0,
       transit: transit.length > 0? transit[0].items_intransit:0,
       delivered: delivered.length > 0? delivered[0].items_delivered:0,
-      itemSold:itemSold.length > 0? itemSold[0].items_sold:0,
-      test: ordered
+      totalRevenue: delivered.length > 0? delivered[0].revenue_generated:0,
+      totalitemsSold:itemSold.length > 0? itemSold[0].items_sold:0,
     };
 
     return sendResponse(res, true, 200, "found orders", data);
