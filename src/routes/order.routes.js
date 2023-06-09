@@ -33,4 +33,11 @@ router.get(
   orderController.seller_metrics_info
 );
 
+// router.patch(
+//   "/testingOrder",
+//   authenticated,
+//   authorize(["BUYER"]),
+//   orderController.testOrder
+// );
+
 module.exports = router;
