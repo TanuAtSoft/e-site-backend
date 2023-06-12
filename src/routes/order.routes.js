@@ -30,14 +30,15 @@ router.get(
 router.get(
   "/getSellerMatricsInfo",
   authenticated,
+  authorize(["SELLER"]),
   orderController.seller_metrics_info
 );
 
-// router.patch(
-//   "/testingOrder",
-//   authenticated,
-//   authorize(["BUYER"]),
-//   orderController.testOrder
-// );
+router.get(
+  "/sellerStocksInfo",
+  authenticated,
+  authorize(["SELLER"]),
+  orderController.seller_stocks_info
+);
 
 module.exports = router;

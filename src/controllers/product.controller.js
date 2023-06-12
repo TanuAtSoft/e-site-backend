@@ -113,3 +113,19 @@ exports.softDeleteSingleProduct = async (req, res, next) => {
     next(error);
   }
 };
+
+// exports.seller_stocks_info = async (req, res, next) => {
+//   try {
+//     const product = await Product.findById(req.params.id);
+//     if(product){
+//       product.softDeleted = true;
+//       await product.save()
+//       return sendResponse(res, true, 200, "Product deleted successfully");
+//     }
+//     if(!product){
+//       return sendResponse(res, true, 200, "Product cannot be found");
+//     }
+//   } catch (error) {
+//     next(error);
+//   }
+// };

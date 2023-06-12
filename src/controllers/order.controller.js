@@ -23,7 +23,7 @@ exports.createOrder = async (req, res) => {
       paymentStatus: req.body.isCod ? "COD" : "PREPAID",
     });
     await newOrder.save();
-    
+
     for (let i = 0; i < d.length; i++) {
       const product = await Product.findById(d[i].productId);
       product.stock = parseInt(product.stock) - parseInt(d[i].quantity);
@@ -67,6 +67,19 @@ exports.seller_order_info = async (req, res) => {
           "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
         },
       },
+      // {
+      //   $group: {
+      //     _id: 0,
+      //     items_delivered: {
+      //       $sum: "$orderedItems.quantity",
+      //     },
+      //     revenue_generated: {
+      //       $sum: {
+      //         $multiply: ["$orderedItems.quantity", "$orderedItems.price"],
+      //       },
+      //     },
+      //   },
+      // },
     ]);
 
     return sendResponse(res, true, 200, "found orders", data);
@@ -255,28 +268,26 @@ exports.seller_metrics_info = async (req, res) => {
   }
 };
 
-// exports.testOrder = async (req, res) => {
-//   console.log("req",req)
-//   try {
-//     const data = await User.findById(req.user._id).populate("cart");
-//     const d = data.cart;
-//     d.forEach((object) => {
-//       delete object._id;
-//     });
-//     for (let i = 0; i < d.length; i++) {
-//       const product = await Product.findById(d[i].productId);
-//       product.stock = parseInt(product.stock) - parseInt(d[i].quantity);
-//       await product.save();
-//       console.log("product", product)
-//     }
+exports.seller_stocks_info = async (req, res, next) => {
+  try {
+    const data = await Order.aggregate([
+      { $unwind: "$orderedItems" },
+      {
+        $match: {
+          "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+        },
+      },
+      {
+        $group: {
+          _id: "$orderedItems.productId",
+          total_items_sold: { $sum: "$orderedItems.quantity"}
+        },
+      },
+    ]);
 
-//     return sendResponse(
-//       res,
-//       true,
-//       200,
-//       "Your Order has been successfully placed"
-//     );
-//   } catch (err) {
-//     return sendResponse(res, false, 400, err);
-//   }
-// };
+
+    return sendResponse(res, true, 200, "found orders", data);
+  } catch (e) {
+    return sendResponse(res, false, 400, e);
+  }
+};
