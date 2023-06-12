@@ -322,3 +322,40 @@ exports.seller_revenue_info = async (req, res, next) => {
     return sendResponse(res, false, 400, e);
   }
 };
+
+exports.seller_bestseller_info = async (req, res, next) => {
+  try {
+    const data = await Order.aggregate([
+      { $unwind: "$orderedItems" },
+      {
+        $match: {
+          "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+        },
+      },
+      {
+        $group: {
+          "_id": "$orderedItems.productId",
+          "sum": {
+            "$sum": "$orderedItems.qty"
+          }
+        }
+      },
+      {
+        "$sort": {
+          sum: -1
+        }
+      },
+      {
+        "$group": {
+          "_id": null,
+          "top_selling_products ": {
+            $push: "$_id"
+          }
+        }
+      }
+    ]);
+    return sendResponse(res, true, 200, "found orders", data);
+  } catch (e) {
+    return sendResponse(res, false, 400, e);
+  }
+};

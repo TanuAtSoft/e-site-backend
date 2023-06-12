@@ -46,4 +46,9 @@ authenticated,
 authorize(["SELLER"]),
 orderController.seller_revenue_info)
 
+router.get("/sellerBestSellerInfo",
+authenticated,
+authorize(["SELLER"]),
+orderController.seller_bestseller_info)
+
 module.exports = router;
