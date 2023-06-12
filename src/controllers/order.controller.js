@@ -347,8 +347,8 @@ exports.seller_bestseller_info = async (req, res, next) => {
       },
       {
         "$group": {
-          "_id": null,
-          "top_selling_products ": {
+          _id: null,
+          top_selling_products : {
             $push: "$_id"
           }
         }
