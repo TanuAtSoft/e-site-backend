@@ -41,4 +41,9 @@ router.get(
   orderController.seller_stocks_info
 );
 
+router.get("/sellerRevenueInfo",
+authenticated,
+authorize(["SELLER"]),
+orderController.seller_revenue_info)
+
 module.exports = router;

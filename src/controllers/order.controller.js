@@ -280,12 +280,43 @@ exports.seller_stocks_info = async (req, res, next) => {
       {
         $group: {
           _id: "$orderedItems.productId",
-          total_items_sold: { $sum: "$orderedItems.quantity"}
+          total_items_sold: { $sum: "$orderedItems.quantity" },
         },
       },
     ]);
 
+    return sendResponse(res, true, 200, "found orders", data);
+  } catch (e) {
+    return sendResponse(res, false, 400, e);
+  }
+};
 
+exports.seller_revenue_info = async (req, res, next) => {
+  try {
+    const data = await Order.aggregate([
+      { $unwind: "$orderedItems" },
+      {
+        $match: {
+          $and: [
+            {
+              "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+            },
+            { "orderedItems.status": "DELIVERED" },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: "$orderedItems.productId",
+          total_items_sold: { $sum: "$orderedItems.quantity" },
+          revenue_generated: {
+            $sum: {
+              $multiply: ["$orderedItems.quantity", "$orderedItems.price"],
+            },
+          },
+        },
+      },
+    ]);
     return sendResponse(res, true, 200, "found orders", data);
   } catch (e) {
     return sendResponse(res, false, 400, e);
