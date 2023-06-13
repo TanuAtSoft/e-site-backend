@@ -280,6 +280,12 @@ exports.seller_stocks_info = async (req, res, next) => {
       {
         $group: {
           _id: "$orderedItems.productId",
+          title: {
+            $first: "$orderedItems.title",
+          },
+          image: {
+            $first: "$orderedItems.image",
+          },
           total_items_sold: { $sum: "$orderedItems.quantity" },
         },
       },
@@ -309,6 +315,12 @@ exports.seller_revenue_info = async (req, res, next) => {
         $group: {
           _id: "$orderedItems.productId",
           total_items_sold: { $sum: "$orderedItems.quantity" },
+          title: {
+            $first: "$orderedItems.title",
+          },
+          image: {
+            $first: "$orderedItems.image",
+          },
           revenue_generated: {
             $sum: {
               $multiply: ["$orderedItems.quantity", "$orderedItems.price"],
