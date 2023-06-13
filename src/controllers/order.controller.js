@@ -334,27 +334,29 @@ exports.seller_bestseller_info = async (req, res, next) => {
       },
       {
         $group: {
-          "_id": "$orderedItems.productId",
-          "sum": {
-            "$sum": "$orderedItems.qty"
-          }
-        }
+          _id: "$orderedItems.productId",
+          title: {
+            $first: "$orderedItems.title",
+          },
+          image: {
+            $first: "$orderedItems.image",
+          },
+          totalSold: {
+            $sum: "$orderedItems.quantity",
+          },
+        },
       },
       {
-        "$sort": {
-          sum: -1
-        }
+        $sort: {
+          totalSold: -1,
+        },
       },
       {
-        "$group": {
-          _id: null,
-          top_selling_products : {
-            $push: "$_id"
-          }
-        }
-      }
+        $limit: 3,
+      },
     ]);
-    return sendResponse(res, true, 200, "found orders", data);
+
+    return sendResponse(res, true, 200, "found best seller products", data);
   } catch (e) {
     return sendResponse(res, false, 400, e);
   }
