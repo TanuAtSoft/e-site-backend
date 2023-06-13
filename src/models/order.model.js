@@ -34,6 +34,10 @@ const OrderSchema = new mongoose.Schema({
       price: {
         type: Number,
       },
+      rating:{
+        type:Number,
+        default:0,
+      },
       seller: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: "User",

@@ -41,14 +41,26 @@ router.get(
   orderController.seller_stocks_info
 );
 
-router.get("/sellerRevenueInfo",
-authenticated,
-authorize(["SELLER"]),
-orderController.seller_revenue_info)
+router.get(
+  "/sellerRevenueInfo",
+  authenticated,
+  authorize(["SELLER"]),
+  orderController.seller_revenue_info
+);
 
-router.get("/sellerBestSellerInfo",
-authenticated,
-authorize(["SELLER"]),
-orderController.seller_bestseller_info)
+router.get(
+  "/sellerBestSellerInfo",
+  authenticated,
+  authorize(["SELLER"]),
+  orderController.seller_bestseller_info
+);
+
+router.patch(
+  "/reviewProduct",
+  authenticated,
+  authorize(["BUYER"]),
+
+  orderController.update_review_Info
+);
 
 module.exports = router;

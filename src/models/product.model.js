@@ -5,9 +5,9 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  brand:{
-  type:String,
-  required: true,
+  brand: {
+    type: String,
+    required: true,
   },
   category: {
     type: String,
@@ -22,28 +22,25 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  softDeleted:{
+  softDeleted: {
     type: Boolean,
-    enum: [true,false],
+    enum: [true, false],
     default: false,
   },
-  discounts:{
-    type:Number
+  discounts: {
+    type: Number,
   },
-  stock:{
-   type:Number
+  stock: {
+    type: Number,
   },
-  ratings:{
-    type:Number
+  ratings: {
+    type: Number,
   },
   seller: {
     type: mongoose.SchemaTypes.ObjectId,
     ref: "User",
   },
-  reviews: {
-    type: Number,
-    default: 0,
-  },
+  reviews: [Number],
 });
 
 module.exports = mongoose.model("Product", ProductSchema);

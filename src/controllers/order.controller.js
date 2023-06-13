@@ -88,6 +88,38 @@ exports.seller_order_info = async (req, res) => {
   }
 };
 
+exports.update_review_Info = async (req, res) => {
+  try {
+    const data = await Order.findOneAndUpdate(
+      {
+        _id: req.body.orderObjectId,
+        "orderedItems._id": req.body.itemId,
+      },
+      {
+        $set: {
+          "orderedItems.$.rating": req.body.rating,
+        },
+      },
+      {
+        multi: false,
+      }
+    );
+    if (data) {
+      const product = await Product.updateOne(
+        { _id: req.body.itemId },
+        { $push: { ratings: req.body.rating } }
+      );
+      if (product) {
+        await product.save();
+      }
+    }
+
+    return sendResponse(res, true, 200, "Updated order status successfully");
+  } catch (e) {
+    return sendResponse(res, false, 401, "Something went wrong");
+  }
+};
+
 exports.update_Order_Info = async (req, res) => {
   try {
     await Order.findOneAndUpdate(
