@@ -107,15 +107,14 @@ exports.update_review_Info = async (req, res) => {
     if (data) {
       const product = await Product.updateOne(
         { _id: req.body.itemId },
-        { $push: { ratings: req.body.rating } }
+        { $push: { reviews: req.body.rating } }
       );
-      if (product) {
-        await product.save();
-      }
+      console.log("product", product);
     }
 
     return sendResponse(res, true, 200, "Updated order status successfully");
   } catch (e) {
+    console.log(e);
     return sendResponse(res, false, 401, "Something went wrong");
   }
 };

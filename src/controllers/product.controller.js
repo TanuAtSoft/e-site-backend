@@ -114,17 +114,14 @@ exports.softDeleteSingleProduct = async (req, res, next) => {
   }
 };
 
-// exports.seller_stocks_info = async (req, res, next) => {
+// exports.testReviews = async (req, res, next) => {
 //   try {
-//     const product = await Product.findById(req.params.id);
-//     if(product){
-//       product.softDeleted = true;
-//       await product.save()
-//       return sendResponse(res, true, 200, "Product deleted successfully");
-//     }
-//     if(!product){
-//       return sendResponse(res, true, 200, "Product cannot be found");
-//     }
+//     const product = await Product.updateOne(
+//       { _id: req.params.id },
+//       { $push: { reviews: req.body.rating } }
+//     );
+//     console.log("product", product)
+//     return sendResponse(res, true, 200, "reviews added");
 //   } catch (error) {
 //     next(error);
 //   }
