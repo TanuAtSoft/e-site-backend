@@ -404,3 +404,40 @@ exports.seller_bestseller_info = async (req, res, next) => {
     return sendResponse(res, false, 400, e);
   }
 };
+
+exports.best_seller_products = async (req, res) => {
+  try {
+    const data = await Order.aggregate([
+      { $unwind: "$orderedItems" },
+      {
+        $group: {
+          _id: "$orderedItems.productId",
+          title: {
+            $first: "$orderedItems.title",
+          },
+          price : {
+            $first: "$orderedItems.price"
+          },
+          image: {
+            $first: "$orderedItems.image",
+          },
+          totalSold: {
+            $sum: "$orderedItems.quantity",
+          },
+        },
+      },
+      {
+        $sort: {
+          totalSold: -1,
+        },
+      },
+      {
+        $limit: 10,
+      },
+    ]);
+
+    return sendResponse(res, true, 200, "found orders", data);
+  } catch (e) {
+    return sendResponse(res, false, 400, e);
+  }
+};

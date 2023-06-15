@@ -1,25 +1,52 @@
-const Category = require("../models/category.model");
+const MainCategory = require("../models/main_category.model");
+const SubCategory = require("../models/sub_category.model");
 const { sendResponse } = require("../helpers/requestHandlerHelper");
 
-exports.getCategories = async (req, res, next) => {
+exports.getMainCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find();
+    const mainCategories = await MainCategory.find();
 
     return sendResponse(res, true, 200, "Products found successfully", {
-      categories,
+      mainCategories,
     });
   } catch (error) {
     next(error);
   }
 };
 
-exports.addCategories = async (req, res, next) => {
+exports.getSubCategories = async (req, res, next) => {
   try {
-    const category = new Category({
-      name: req.body.name,
+    const subCategories = await SubCategory.find();
+
+    return sendResponse(res, true, 200, "Products found successfully", {
+      subCategories,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.addMainCategories = async (req, res, next) => {
+  try {
+    const mainCategory = new MainCategory({
+      mainCategory: req.body.mainCategory,
+      //subCategory:req.body.subCategory?req.body.subCategory:null
     });
 
-    await category.save();
+    await mainCategory.save();
+    return sendResponse(res, true, 200, "category added successfully");
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+exports.addSubCategories = async (req, res, next) => {
+  try {
+    const subCategory = new SubCategory({
+      subCategory: req.body.subCategory,
+    });
+
+    await subCategory.save();
     return sendResponse(res, true, 200, "category added successfully");
   } catch (e) {
     console.log(e);

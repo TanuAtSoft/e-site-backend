@@ -3,7 +3,10 @@ const { sendResponse } = require("../helpers/requestHandlerHelper");
 
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find({softDeleted: false}).populate("seller", "name");
+    const products = await Product.find({ softDeleted: false }).populate(
+      "seller",
+      "name"
+    );
 
     return sendResponse(res, true, 200, "Products found successfully", {
       products,
@@ -32,7 +35,9 @@ exports.addProduct = async (req, res, next) => {
   const product = new Product({
     title: req.body.title,
     brand: req.body.brand,
-    category: req.body.category,
+    name: req.body.name,
+    main_category: req.body.main_category,
+    sub_category: req.body.sub_category,
     images: req.body.images,
     description: req.body.description,
     price: req.body.price,
@@ -49,8 +54,10 @@ exports.editProduct = async (req, res, next) => {
     const product = await Product.findById(req.params.id);
     if (product) {
       (product.title = req.body.title),
+        (product.name = req.body.name),
         (product.brand = req.body.brand),
-        (product.category = req.body.category),
+        (product.main_category = req.body.main_category),
+        (product.sub_category = req.body.sub_category),
         (product.images = req.body.images),
         (product.description = req.body.description),
         (product.stock = req.body.stock),
@@ -101,12 +108,12 @@ exports.getProductsByUser = async (req, res, next) => {
 exports.softDeleteSingleProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
-    if(product){
+    if (product) {
       product.softDeleted = true;
-      await product.save()
+      await product.save();
       return sendResponse(res, true, 200, "Product deleted successfully");
     }
-    if(!product){
+    if (!product) {
       return sendResponse(res, true, 200, "Product cannot be found");
     }
   } catch (error) {

@@ -5,13 +5,18 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  name: {
+    type: String,
+  },
   brand: {
     type: String,
     required: true,
   },
-  category: {
+  main_category: {
     type: String,
-    required: true,
+  },
+  sub_category: {
+    type:String,
   },
   images: [String],
   description: {

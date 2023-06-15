@@ -6,15 +6,28 @@ const {
 } = require("../middlewares/authenticated.middleware");
 
 router.get(
-    "/getCategory",
-    categoryController.getCategories
+    "/getMainCategory",
+    categoryController.getMainCategories
+  );
+
+  router.get(
+    "/getSubCategory",
+    categoryController.getSubCategories
   );
 
   router.post(
-    "/addCategory",
-    authenticated,
-    categoryController.addCategories
+    "/addMainCategory",
+    // authenticated,
+    categoryController.addMainCategories
   );
+
+  router.post(
+    "/addSubCategory",
+    // authenticated,
+    categoryController.addSubCategories
+  );
+
+
   module.exports = router;
   
   
