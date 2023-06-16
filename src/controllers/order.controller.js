@@ -129,9 +129,8 @@ exports.update_Order_Info = async (req, res) => {
       {
         $set: {
           "orderedItems.$.status": req.body.status,
-          "orderedItems.$.shippingDetails": req.body.shippingDetails
-            ? req.body.shippingDetails
-            : "",
+          "orderedItems.$.shippingCompany": req.body.shippingCompany,
+          "orderedItems.$.trackingNumber" : req.body.trackingNumber,
         },
       },
       {
@@ -418,8 +417,14 @@ exports.best_seller_products = async (req, res) => {
           price : {
             $first: "$orderedItems.price"
           },
+          reviews: {
+            $first: "$orderedItems.reviews"
+          },
           image: {
             $first: "$orderedItems.image",
+          },
+          brand: {
+            $first: "$orderedItems.brand",
           },
           totalSold: {
             $sum: "$orderedItems.quantity",

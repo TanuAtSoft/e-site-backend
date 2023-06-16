@@ -38,9 +38,6 @@ const ProductSchema = new mongoose.Schema({
   stock: {
     type: Number,
   },
-  reviews: {
-    type: Number,
-  },
   seller: {
     type: mongoose.SchemaTypes.ObjectId,
     ref: "User",

@@ -121,15 +121,34 @@ exports.softDeleteSingleProduct = async (req, res, next) => {
   }
 };
 
-// exports.testReviews = async (req, res, next) => {
-//   try {
-//     const product = await Product.updateOne(
-//       { _id: req.params.id },
-//       { $push: { reviews: req.body.rating } }
-//     );
-//     console.log("product", product)
-//     return sendResponse(res, true, 200, "reviews added");
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+
+exports.getTopRatedProducts = async (req, res, next) => {
+  try {
+    const product = await Product.aggregate([
+      {
+        $project: {
+          _id: "$title",
+          title: "$title",
+          images: "$images",
+          brand:"$brand",
+          price:"$price",
+          reviews:"$reviews",
+          avgRating: {
+            $avg: "$reviews"
+          }
+        }
+      },
+      {
+        $sort: {
+          avgRating: -1
+        }
+      },
+      {
+        $limit: 10
+      }
+    ]);
+    return sendResponse(res, true, 200, "topRated products", product);
+  } catch (error) {
+    next(error);
+  }
+};

@@ -24,6 +24,7 @@ exports.addToCart = async (req, res, next) => {
         quantity: 1,
         title: product.title,
         brand: product.brand,
+        reviews: product.reviews,
         image: product.images[0],
         price: parseInt(product.price),
         seller: product.seller,

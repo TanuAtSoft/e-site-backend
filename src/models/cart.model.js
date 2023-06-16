@@ -17,6 +17,7 @@ const CartSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  reviews: [Number],
   image: {
     type: String,
     required: true,

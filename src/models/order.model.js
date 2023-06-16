@@ -36,8 +36,9 @@ const OrderSchema = new mongoose.Schema({
       },
       rating:{
         type:Number,
-        default:0,
+        default:0
       },
+       reviews: [Number],
       seller: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: "User",
@@ -56,7 +57,10 @@ const OrderSchema = new mongoose.Schema({
           status.delivered,
         ],
       },
-      shippingDetails:{
+      shippingCompany:{
+        type:String,
+      },
+      trackingNumber:{
         type:String,
       }
     },

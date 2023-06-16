@@ -36,10 +36,8 @@ router.get(
   authorize(["SELLER", "ADMIN"]),
   productController.getProductsByUser
 );
-// router.patch(
-//   "/testingReviews/:id",
-//   authenticated,
-//   authorize(["BUYER"]),
-//   productController.testReviews
-// );
+router.get(
+  "/getTopRated",
+  productController.getTopRatedProducts
+);
 module.exports = router;
