@@ -16,7 +16,7 @@ const ProductSchema = new mongoose.Schema({
     type: String,
   },
   sub_category: {
-    type:String,
+    type: String,
   },
   images: [String],
   description: {
@@ -43,6 +43,12 @@ const ProductSchema = new mongoose.Schema({
     ref: "User",
   },
   reviews: [Number],
+});
+ProductSchema.index({
+  title: "text",
+  main_category:"text",
+  name: "text",
+  brand: "text",
 });
 
 module.exports = mongoose.model("Product", ProductSchema);

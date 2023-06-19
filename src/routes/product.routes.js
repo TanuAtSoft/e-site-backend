@@ -36,8 +36,11 @@ router.get(
   authorize(["SELLER", "ADMIN"]),
   productController.getProductsByUser
 );
+router.get("/getTopRated", productController.getTopRatedProducts);
 router.get(
-  "/getTopRated",
-  productController.getTopRatedProducts
+  "/getProductsByCategory/:category",
+  productController.getCategoryProducts
 );
+router.get("/getProductsBySearch/:text", productController.getProductsBySearch);
+router.get("/getSearchAutoComplete/:text", productController.getSearchAutoComplete);
 module.exports = router;

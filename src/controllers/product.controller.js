@@ -121,7 +121,6 @@ exports.softDeleteSingleProduct = async (req, res, next) => {
   }
 };
 
-
 exports.getTopRatedProducts = async (req, res, next) => {
   try {
     const product = await Product.aggregate([
@@ -130,24 +129,112 @@ exports.getTopRatedProducts = async (req, res, next) => {
           _id: "$title",
           title: "$title",
           images: "$images",
-          brand:"$brand",
-          price:"$price",
-          reviews:"$reviews",
+          brand: "$brand",
+          price: "$price",
+          reviews: "$reviews",
           avgRating: {
-            $avg: "$reviews"
-          }
-        }
+            $avg: "$reviews",
+          },
+        },
       },
       {
         $sort: {
-          avgRating: -1
-        }
+          avgRating: -1,
+        },
       },
       {
-        $limit: 10
-      }
+        $limit: 10,
+      },
     ]);
     return sendResponse(res, true, 200, "topRated products", product);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getCategoryProducts = async (req, res, next) => {
+  try {
+    const products = await Product.find({
+      main_category: req.params.category,
+    }).populate("seller", "name");
+    return sendResponse(
+      res,
+      true,
+      200,
+      "Products found successfully",
+      products
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getProductsBySearch = async (req, res, next) => {
+  try {
+    const val1 = req.params.text;
+    let pipeline = [
+      {
+        $search: {
+          index: "searchProducts",
+          text: {
+            query: `{\"title\": { $eq : ${req.params.text}}`,
+            //query: req.params.text,
+            path: {
+              wildcard: "*",
+            },
+            // fuzzy: {},
+          },
+        },
+      }
+    ];
+    const splitArr = val1.split(" ");
+    console.log("splitArr", splitArr);
+    const val2 = `\"${val1}\"`;
+    const products = await Product.aggregate(pipeline);
+    return sendResponse(
+      res,
+      true,
+      200,
+      "Products found successfully",
+      products
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getSearchAutoComplete = async (req, res, next) => {
+  try {
+    let pipeline = [
+      {
+        $search: {
+          index: "autoCompleteProducts",
+          autocomplete: {
+            query: req.params.text,
+            path: "name",
+            fuzzy: {
+              "maxEdits": 2,
+              "prefixLength": 3,
+            },
+          },
+        },
+      },{
+        $limit:10
+      },{
+        $project:{
+          "_id":0,
+          "name":1
+        }
+      }
+    ];
+    const products = await Product.aggregate(pipeline);
+    return sendResponse(
+      res,
+      true,
+      200,
+      "Products found successfully",
+      products
+    );
   } catch (error) {
     next(error);
   }
