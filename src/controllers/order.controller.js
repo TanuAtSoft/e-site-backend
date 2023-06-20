@@ -4,6 +4,8 @@ const Cart = require("../models/cart.model");
 const Order = require("../models/order.model");
 const Product = require("../models/product.model");
 const mongoose = require("mongoose");
+const { sendEmail, getUserEmailById } = require("../services/emailSender");
+const { DataSync } = require("aws-sdk");
 
 exports.createOrder = async (req, res) => {
   try {
@@ -36,6 +38,58 @@ exports.createOrder = async (req, res) => {
     await Cart.deleteMany({ _id: { $in: idsArr } });
 
     const data2 = await Order.find(newOrder._id);
+
+    for (const product of d) {
+      try {
+        const sellerEmail = await getUserEmailById(product.seller); // Await the function call to resolve the Promise
+
+        const emailSubject = "New Order Notification";
+        const emailText = `Hello,
+
+        You have received a new order with ID ${newOrder.orderId}.
+    
+        Product Details:
+        - Name: ${product.title}
+        - Quantity: ${product.quantity}
+    
+        Thank you for your business!
+    
+        Regards,
+        E-site Management`;
+        // Get user email by user Id
+
+        const userEmail = await getUserEmailById(newOrder.orderedBy);
+
+        // Send email to the user with the list of purchased products
+        const emailSubjectUser = "Order Confirmation";
+        const emailTextUser = `Hello,
+
+    Thank you for your order! Here are the details of your purchase:
+
+    Order ID: ${newOrder.orderId}
+
+    Products:
+    ${d
+      .map(
+        (product) =>
+          `- ${product.title} (Quantity: ${product.quantity}) (Price: ${product.price})`
+      )
+      .join("\n")}
+
+    Payment Mode: ${newOrder.paymentStatus} 
+
+    If you have any questions or need further assistance, please feel free to contact us.
+
+    Regards,
+   E-site Service Mangement`;
+
+        await sendEmail(sellerEmail, emailSubject, emailText);
+        await sendEmail(userEmail, emailSubjectUser, emailTextUser);
+      } catch (error) {
+        console.error("Error getting seller email:", error);
+        // Handle the error appropriately (e.g., log, throw, or continue with the loop)
+      }
+    }
     return sendResponse(
       res,
       true,
@@ -109,7 +163,6 @@ exports.update_review_Info = async (req, res) => {
         { _id: req.body.itemId },
         { $push: { reviews: req.body.rating } }
       );
-      console.log("product", product);
     }
 
     return sendResponse(res, true, 200, "Updated order status successfully");
@@ -121,7 +174,7 @@ exports.update_review_Info = async (req, res) => {
 
 exports.update_Order_Info = async (req, res) => {
   try {
-    await Order.findOneAndUpdate(
+    const order =await Order.findOneAndUpdate(
       {
         _id: req.body.orderObjectId,
         "orderedItems._id": req.body.itemId,
@@ -130,15 +183,39 @@ exports.update_Order_Info = async (req, res) => {
         $set: {
           "orderedItems.$.status": req.body.status,
           "orderedItems.$.shippingCompany": req.body.shippingCompany,
-          "orderedItems.$.trackingNumber" : req.body.trackingNumber,
+          "orderedItems.$.trackingNumber": req.body.trackingNumber,
         },
       },
       {
         multi: false,
       }
     );
-    return sendResponse(res, true, 200, "Updated order status successfully");
+    if(order){
+      
+      for (let i = 0 ; i< order.orderedItems.length; i++){
+        if(order.orderedItems[i]._id === req.body.itemId ){
+          const userEmail = await getUserEmailById(order.orderedBy);
+          const emailSubjectUser = "Order Status Change";
+          const emailText = `Hello,
+            Your order status with order ID ${order.orderId} has changed.
+           For Item ${order.orderedItems[i].title}
+           of  ${order.orderedItems[i].quantity}
+           order status changed to ${req.body.status}
+           Payment status for this product is ${order.paymentStatus} of INR ${order.orderedItems[i].price * order.orderedItems[i].quantity}
+           Kindly Login to your https://e-site-flame.vercel.app/ to see complete details.
+        
+            Thank you for your business!
+            Regards,
+            E-site Management`;
+          await sendEmail(userEmail, emailSubjectUser, emailText);
+          return sendResponse(res, true, 200, "Updated order status successfully");
+        }
+      
+      }
+    
+    }
   } catch (e) {
+    console.log("e",e)
     return sendResponse(res, false, 401, "Something went wrong");
   }
 };
@@ -414,11 +491,11 @@ exports.best_seller_products = async (req, res) => {
           title: {
             $first: "$orderedItems.title",
           },
-          price : {
-            $first: "$orderedItems.price"
+          price: {
+            $first: "$orderedItems.price",
           },
           reviews: {
-            $first: "$orderedItems.reviews"
+            $first: "$orderedItems.reviews",
           },
           image: {
             $first: "$orderedItems.image",

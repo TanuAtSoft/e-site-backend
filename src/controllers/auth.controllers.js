@@ -54,18 +54,18 @@ exports.login = async (req, res) => {
             email: userExist.email,
             _id: userExist._id,
             role: userExist.role,
-            name: userExist.name
+            name: userExist.name,
           },
           process.env.ACCESS_TOKEN_SECRET
         );
-         
+
         const user = {
           user: userExist.name,
           token: accessToken,
           role: userExist.role,
           cart: userExist.cart.length,
           address: userExist.address.length,
-          wishlist: userExist.wishlist.length
+          wishlist: userExist.wishlist.length,
         };
 
         return sendResponse(
@@ -89,5 +89,32 @@ exports.login = async (req, res) => {
   }
   if (!userExist) {
     return sendResponse(res, false, 401, "user does not exist");
+  }
+};
+
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const userExist = await User.findOne({_id: req.user._id});
+    if (userExist === null) {
+      return sendResponse(res, true, 400, "Invalid Token");
+    }
+   
+    if (await bcrypt.compare(req.body.oldPassword, userExist.password)) {
+      const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+      await User.findByIdAndUpdate(req.user._id, {
+        password: hashedPassword,
+      });
+
+      return sendResponse(res, true, 200, "Password Changed Sucessfully");
+    } else {
+      return sendResponse(res, true, 200, "Old Password doesn't match");
+    }
+    // compare the current time and resetPasswordExpTime
+    // if (moment().unix() < user.resetPasswordExpTime) {
+
+    // }
+    // return sendResponse(res, true, 200, "Password Reset Link Expired");
+  } catch (error) {
+    next(error);
   }
 };

@@ -188,8 +188,6 @@ exports.getProductsBySearch = async (req, res, next) => {
       }
     ];
     const splitArr = val1.split(" ");
-    console.log("splitArr", splitArr);
-    const val2 = `\"${val1}\"`;
     const products = await Product.aggregate(pipeline);
     return sendResponse(
       res,
