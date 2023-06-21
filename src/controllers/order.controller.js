@@ -5,7 +5,6 @@ const Order = require("../models/order.model");
 const Product = require("../models/product.model");
 const mongoose = require("mongoose");
 const { sendEmail, getUserEmailById } = require("../services/emailSender");
-const { DataSync } = require("aws-sdk");
 
 exports.createOrder = async (req, res) => {
   try {
@@ -160,7 +159,7 @@ exports.update_review_Info = async (req, res) => {
     );
     if (data) {
       const product = await Product.updateOne(
-        { _id: req.body.itemId },
+        { _id: req.body.productId },
         { $push: { reviews: req.body.rating } }
       );
     }
@@ -171,6 +170,7 @@ exports.update_review_Info = async (req, res) => {
     return sendResponse(res, false, 401, "Something went wrong");
   }
 };
+
 
 exports.update_Order_Info = async (req, res) => {
   try {
@@ -191,9 +191,8 @@ exports.update_Order_Info = async (req, res) => {
       }
     );
     if(order){
-      
       for (let i = 0 ; i< order.orderedItems.length; i++){
-        if(order.orderedItems[i]._id === req.body.itemId ){
+        if(order.orderedItems[i].productId === req.body.productId ){
           const userEmail = await getUserEmailById(order.orderedBy);
           const emailSubjectUser = "Order Status Change";
           const emailText = `Hello,
@@ -203,7 +202,6 @@ exports.update_Order_Info = async (req, res) => {
            order status changed to ${req.body.status}
            Payment status for this product is ${order.paymentStatus} of INR ${order.orderedItems[i].price * order.orderedItems[i].quantity}
            Kindly Login to your https://e-site-flame.vercel.app/ to see complete details.
-        
             Thank you for your business!
             Regards,
             E-site Management`;
