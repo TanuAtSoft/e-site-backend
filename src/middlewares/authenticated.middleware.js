@@ -11,7 +11,6 @@ const authenticated = async (req, res, next) => {
         token[1].trim(),
         process.env.ACCESS_TOKEN_SECRET
       );
-      // console.log("req.user", req.user);
       next();
     }
   } catch (error) {

@@ -42,5 +42,12 @@ router.get(
   productController.getCategoryProducts
 );
 router.get("/getProductsBySearch/:text", productController.getProductsBySearch);
-router.get("/getSearchAutoComplete/:text", productController.getSearchAutoComplete);
+router.get(
+  "/getSearchAutoComplete/:text",
+  productController.getSearchAutoComplete
+);
+router.get(
+  "/getBestDealProducts",
+  productController.getBestDealProducts)
+
 module.exports = router;

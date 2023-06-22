@@ -36,6 +36,7 @@ exports.addProduct = async (req, res, next) => {
     title: req.body.title,
     brand: req.body.brand,
     name: req.body.name,
+    discount: req.body.discount,
     main_category: req.body.main_category,
     sub_category: req.body.sub_category,
     images: req.body.images,
@@ -56,6 +57,7 @@ exports.editProduct = async (req, res, next) => {
       (product.title = req.body.title),
         (product.name = req.body.name),
         (product.brand = req.body.brand),
+        (product.discount = req.body.discount),
         (product.main_category = req.body.main_category),
         (product.sub_category = req.body.sub_category),
         (product.images = req.body.images),
@@ -131,6 +133,7 @@ exports.getTopRatedProducts = async (req, res, next) => {
           images: "$images",
           brand: "$brand",
           price: "$price",
+          discount: "$discount",
           reviews: "$reviews",
           avgRating: {
             $avg: "$reviews",
@@ -140,6 +143,35 @@ exports.getTopRatedProducts = async (req, res, next) => {
       {
         $sort: {
           avgRating: -1,
+        },
+      },
+      {
+        $limit: 10,
+      },
+    ]);
+    return sendResponse(res, true, 200, "topRated products", product);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getBestDealProducts = async (req, res, next) => {
+  try {
+    const product = await Product.aggregate([
+      {
+        $project: {
+          _id: "$title",
+          title: "$title",
+          images: "$images",
+          brand: "$brand",
+          price: "$price",
+          reviews: "$reviews",
+          discount: "$discount"
+        },
+      },
+      {
+        $sort: {
+          discount: -1,
         },
       },
       {
@@ -171,7 +203,6 @@ exports.getCategoryProducts = async (req, res, next) => {
 
 exports.getProductsBySearch = async (req, res, next) => {
   try {
-    const val1 = req.params.text;
     let pipeline = [
       {
         $search: {
@@ -187,7 +218,6 @@ exports.getProductsBySearch = async (req, res, next) => {
         },
       }
     ];
-    const splitArr = val1.split(" ");
     const products = await Product.aggregate(pipeline);
     return sendResponse(
       res,

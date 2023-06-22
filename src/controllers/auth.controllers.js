@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { sendResponse } = require("../helpers/requestHandlerHelper");
 const { roles } = require("../utils/userEnum");
+const { sendEmail } = require("../services/emailSender");
 
 exports.register = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -56,7 +57,8 @@ exports.login = async (req, res) => {
             role: userExist.role,
             name: userExist.name,
           },
-          process.env.ACCESS_TOKEN_SECRET
+          process.env.ACCESS_TOKEN_SECRET,
+          { expiresIn: "1h" }
         );
 
         const user = {
@@ -94,11 +96,11 @@ exports.login = async (req, res) => {
 
 exports.resetPassword = async (req, res, next) => {
   try {
-    const userExist = await User.findOne({_id: req.user._id});
+    const userExist = await User.findOne({ _id: req.user._id });
     if (userExist === null) {
       return sendResponse(res, true, 400, "Invalid Token");
     }
-   
+
     if (await bcrypt.compare(req.body.oldPassword, userExist.password)) {
       const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
       await User.findByIdAndUpdate(req.user._id, {
@@ -116,5 +118,64 @@ exports.resetPassword = async (req, res, next) => {
     // return sendResponse(res, true, 200, "Password Reset Link Expired");
   } catch (error) {
     next(error);
+  }
+};
+
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const userExist = await User.findOne({ email: req.body.email });
+    if (userExist === null) {
+      return sendResponse(res, true, 400, "user doesnot exist");
+    }
+
+    if (userExist) {
+      const accessToken = jwt.sign(
+        {
+          email: userExist.email,
+          _id: userExist._id,
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "300s" }
+      );
+
+      const userEmail = userExist.email; // Await the function call to resolve the Promise
+      const emailSubject = "Password Reset Link";
+      const emailText = `Hello ${userExist.name},
+
+        Kindly click the link below to reset your password.
+
+        ${process.env.FORGOT_PASSWORD_LINK}/${accessToken}
+    
+        Regards,
+        E-site Management`;
+
+      await sendEmail(userEmail, emailSubject, emailText);
+      return sendResponse(
+        res,
+        true,
+        200,
+        "Password reset link sent to your email id"
+      );
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.resetPasswordRequest = async (req, res, next) => {
+  try {
+    const userExist = await User.findOne({ _id: req.user._id });
+    if (userExist === null) {
+      return sendResponse(res, true, 400, "Invalid Token");
+    }
+    if(userExist){
+      const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+      await User.findByIdAndUpdate(req.user._id, {
+        password: hashedPassword,
+      });
+      return sendResponse(res, true, 200, "Password has been Reset Successfully");
+    }
+  } catch (e) {
+    console.log("e", e);
   }
 };
