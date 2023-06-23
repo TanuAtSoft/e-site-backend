@@ -5,6 +5,8 @@ const {
   authenticated,
 } = require("../middlewares/authenticated.middleware");
 
+const {mainCategoryValidator,subCategoryValidator} = require("../validators/category.validators")
+
 router.get(
     "/getMainCategory",
     categoryController.getMainCategories
@@ -17,12 +19,14 @@ router.get(
 
   router.post(
     "/addMainCategory",
+    mainCategoryValidator,
     // authenticated,
     categoryController.addMainCategories
   );
 
   router.post(
     "/addSubCategory",
+    subCategoryValidator,
     // authenticated,
     categoryController.addSubCategories
   );

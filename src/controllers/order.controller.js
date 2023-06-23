@@ -102,6 +102,7 @@ exports.createOrder = async (req, res) => {
     return sendResponse(res, false, 400, err);
   }
 };
+
 exports.getAllOrders = async (req, res) => {
   try {
     const doc = await Order.find();
@@ -170,7 +171,6 @@ exports.update_review_Info = async (req, res) => {
     return sendResponse(res, false, 401, "Something went wrong");
   }
 };
-
 
 exports.update_Order_Info = async (req, res) => {
   try {

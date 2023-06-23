@@ -6,11 +6,11 @@ const AddressSchema = new mongoose.Schema({
     required: true,
   },
   mobileNumber: {
-    type: String,
+    type: Number,
     required: true,
   },
   pincode: {
-    type: String,
+    type: Number,
     required: true,
   },
   houseNumber: {

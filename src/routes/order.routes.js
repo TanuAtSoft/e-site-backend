@@ -4,9 +4,15 @@ const {
   authorize,
   authenticated,
 } = require("../middlewares/authenticated.middleware");
+const {
+  createOrderValidator,
+  updateOrderReviewValidator,
+  updateOrderInfoValidator
+} = require("../validators/order.validator")
 
 router.post(
   "/saveOrder",
+  createOrderValidator,
   authenticated,
   authorize(["BUYER"]),
   orderController.createOrder
@@ -18,6 +24,7 @@ router.get("/getOrderInfo", authenticated, orderController.seller_order_info);
 
 router.patch(
   "/updateOrderStatus",
+  updateOrderInfoValidator,
   authenticated,
   orderController.update_Order_Info
 );
@@ -57,6 +64,7 @@ router.get(
 
 router.patch(
   "/reviewProduct",
+  updateOrderReviewValidator,
   authenticated,
   authorize(["BUYER"]),
   orderController.update_review_Info

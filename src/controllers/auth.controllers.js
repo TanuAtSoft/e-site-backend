@@ -12,7 +12,7 @@ exports.register = async (req, res) => {
       email: req.body.email,
     }).exec();
     if (userExist) {
-      return sendResponse(res, false, 400, "email already exists");
+      return sendResponse(res, true, 400, "email already exists");
     }
     if (!userExist) {
       if (req.body.isSeller) {

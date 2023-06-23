@@ -78,19 +78,6 @@ exports.editProduct = async (req, res, next) => {
   }
 };
 
-exports.getProductByCategory = async (req, res, next) => {
-  try {
-    const products = await Product.find({
-      category: req.body.category,
-    }).populate("seller", "name");
-    return sendResponse(res, true, 200, "Products found successfully", {
-      products,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 exports.getProductsByUser = async (req, res, next) => {
   try {
     const products = await Product.find({ seller: req.user._id });

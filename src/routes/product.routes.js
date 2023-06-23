@@ -5,6 +5,7 @@ const {
   authorize,
   authenticated,
 } = require("../middlewares/authenticated.middleware");
+const { productValidator } = require("../validators/product.validators");
 
 router.get("/products", productController.getProducts);
 
@@ -12,6 +13,7 @@ router.get("/product/:id", productController.getSingleProduct);
 
 router.post(
   "/addProducts",
+  productValidator,
   authenticated,
   authorize(["SELLER", "ADMIN"]),
   productController.addProduct
@@ -19,6 +21,7 @@ router.post(
 
 router.patch(
   "/editProduct/:id",
+  productValidator,
   authenticated,
   authorize(["SELLER", "ADMIN"]),
   productController.editProduct
@@ -29,7 +32,7 @@ router.patch(
   authorize(["SELLER", "ADMIN"]),
   productController.softDeleteSingleProduct
 );
-router.get("/getProductByCategory", productController.getProductByCategory);
+
 router.get(
   "/getProductByUser",
   authenticated,
@@ -46,8 +49,6 @@ router.get(
   "/getSearchAutoComplete/:text",
   productController.getSearchAutoComplete
 );
-router.get(
-  "/getBestDealProducts",
-  productController.getBestDealProducts)
+router.get("/getBestDealProducts", productController.getBestDealProducts);
 
 module.exports = router;

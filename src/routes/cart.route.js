@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const cartController = require("../controllers/cart.controller");
+const {addToCartValidator,removeItemFromCartValidator} = require ( "../validators/cart.validators")
+
 const {
   authorize,
   authenticated,
@@ -8,6 +10,7 @@ const {
 
 router.patch(
   "/addToCart",
+  addToCartValidator,
   authenticated,
   authorize(["BUYER"]),
   cartController.addToCart
@@ -28,6 +31,7 @@ router.get(
 
 router.put(
   "/deleteCartItem",
+  removeItemFromCartValidator,
   authenticated,
   authorize(["BUYER"]),
   cartController.removeItemFromCart
@@ -35,6 +39,7 @@ router.put(
 
 router.delete(
   "/deleteItemFromCart",
+  removeItemFromCartValidator,
   authenticated,
   authorize(["BUYER"]),
   cartController.deleteItemFromCart
