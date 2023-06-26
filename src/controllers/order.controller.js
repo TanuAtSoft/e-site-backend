@@ -14,7 +14,15 @@ exports.createOrder = async (req, res) => {
     d.forEach((object) => {
       delete object._id;
     });
-
+    for (let i = 0; i < d.length; i++) {
+      const product = await Product.findById(d[i].productId);
+      const temp = (product.price / 100) * product.discount;
+      const temp2 = product.price - temp;
+      d[i].discountedPrice =  temp2.toFixed();
+      product.stock = parseInt(product.stock) - parseInt(d[i].quantity);
+      await product.save();
+      await data.save();
+    }
     const newOrder = new Order({
       orderId: req.body.orderId,
       orderedBy: req.user._id,
@@ -22,14 +30,9 @@ exports.createOrder = async (req, res) => {
       orderedItems: d,
       deliveryAddress: req.body.deliveryAddress,
       paymentStatus: req.body.isCod ? "COD" : "PREPAID",
+      totalAmountPaid: req.body.totalAmountPaid
     });
     await newOrder.save();
-
-    for (let i = 0; i < d.length; i++) {
-      const product = await Product.findById(d[i].productId);
-      product.stock = parseInt(product.stock) - parseInt(d[i].quantity);
-      await product.save();
-    }
     await data.updateOne({ $push: { orders: newOrder._id } }, { multi: true });
     await User.findByIdAndUpdate(req.user._id, {
       $set: { cart: [] },
@@ -71,11 +74,12 @@ exports.createOrder = async (req, res) => {
     ${d
       .map(
         (product) =>
-          `- ${product.title} (Quantity: ${product.quantity}) (Price: ${product.price})`
+          `- ${product.title} (Quantity: ${product.quantity}) (Price: ${product.discountedPrice? product.discountedPrice : product.price})`
       )
       .join("\n")}
 
     Payment Mode: ${newOrder.paymentStatus} 
+    Total Amount Paid : ${req.body.totalAmountPaid}
 
     If you have any questions or need further assistance, please feel free to contact us.
 

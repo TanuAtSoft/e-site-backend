@@ -5,14 +5,14 @@ const { status } = require("../utils/statusEnum");
 const OrderSchema = new mongoose.Schema({
   orderId: {
     type: String,
-    required: true
+    required: true,
   },
   orderedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  buyerName:{
-  type:String,
+  buyerName: {
+    type: String,
   },
   orderedItems: [
     {
@@ -34,11 +34,14 @@ const OrderSchema = new mongoose.Schema({
       price: {
         type: Number,
       },
-      rating:{
-        type:Number,
-        default:0
+      discountedPrice: {
+        type: Number,
       },
-       reviews: [Number],
+      rating: {
+        type: Number,
+        default: 0,
+      },
+      reviews: [Number],
       seller: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: "User",
@@ -47,7 +50,7 @@ const OrderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
-      status:{
+      status: {
         type: String,
         enum: [
           status.ordered,
@@ -57,32 +60,33 @@ const OrderSchema = new mongoose.Schema({
           status.delivered,
         ],
       },
-      shippingCompany:{
-        type:String,
+      shippingCompany: {
+        type: String,
       },
-      trackingNumber:{
-        type:String,
-      }
+      trackingNumber: {
+        type: String,
+      },
     },
   ],
   deliveryAddress: {
-    type: String
+    type: String,
   },
   paymentStatus: {
     type: String,
-    enum: [
-      payment.prepaid,
-      payment.cod
-    ],
+    enum: [payment.prepaid, payment.cod],
+  },
+  totalAmountPaid: {
+    type: Number,
+    required: true,
   },
   createdAt: {
     type: Date,
-    default: Date.now()
+    default: Date.now(),
   },
   updatedAt: {
     type: Date,
-    default: Date.now()
-  }
+    default: Date.now(),
+  },
 });
 
 module.exports = mongoose.model("Order", OrderSchema);

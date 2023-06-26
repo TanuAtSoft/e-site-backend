@@ -7,6 +7,7 @@ const createOrderValidator = async (req, res, next) => {
         orderId: Joi.string().required(),
         deliveryAddress:Joi.string().required(),
         isCod: Joi.boolean().required(),
+        totalAmountPaid: Joi.number().required()
     });
 
     const { value, error } = schema.validate(req.body);
