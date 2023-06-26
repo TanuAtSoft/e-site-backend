@@ -45,6 +45,7 @@ exports.getWishlist = async (req, res) => {
     return sendResponse(res, false, 400, err.message);
   }
 };
+
 exports.getWishlistLength = async (req, res) => {
   try {
    const data = await User.findById({ _id: req.user._id });

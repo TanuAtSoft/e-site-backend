@@ -44,12 +44,16 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
+  const user = await User.findOne({
+    email: req.body.email,
+  }).select('password').exec();
   const userExist = await User.findOne({
     email: req.body.email,
   }).exec();
+
   if (userExist) {
     try {
-      if (await bcrypt.compare(req.body.password, userExist.password)) {
+      if (await bcrypt.compare(req.body.password, user.password)) {
         const accessToken = jwt.sign(
           {
             email: userExist.email,
@@ -65,9 +69,9 @@ exports.login = async (req, res) => {
           user: userExist.name,
           token: accessToken,
           role: userExist.role,
-          cart: userExist.cart.length,
-          address: userExist.address.length,
-          wishlist: userExist.wishlist.length,
+          // cart: userExist.cart.length,
+          // address: userExist.address.length,
+          // wishlist: userExist.wishlist.length,
         };
 
         return sendResponse(

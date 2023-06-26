@@ -37,28 +37,28 @@ router.get(
 router.get(
   "/getSellerMatricsInfo",
   authenticated,
-  authorize(["SELLER"]),
+  authorize(["SELLER","ADMIN"]),
   orderController.seller_metrics_info
 );
 
 router.get(
   "/sellerStocksInfo",
   authenticated,
-  authorize(["SELLER"]),
+  authorize(["SELLER","ADMIN"]),
   orderController.seller_stocks_info
 );
 
 router.get(
   "/sellerRevenueInfo",
   authenticated,
-  authorize(["SELLER"]),
+  authorize(["SELLER","ADMIN"]),
   orderController.seller_revenue_info
 );
 
 router.get(
   "/sellerBestSellerInfo",
   authenticated,
-  authorize(["SELLER"]),
+  authorize(["SELLER","ADMIN"]),
   orderController.seller_bestseller_info
 );
 
