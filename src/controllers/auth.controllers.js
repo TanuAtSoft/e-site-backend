@@ -33,9 +33,31 @@ exports.register = async (req, res) => {
         email: req.body.email,
         password: hashedPassword,
         role: roles.buyer,
+        verified: false
       });
-
       await user.save();
+      const accessToken = jwt.sign(
+        {
+          email: user.email,
+          _id: user._id,
+          role: roles.buyer,
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "1d" }
+      );
+
+      const userEmail = user.email; // Await the function call to resolve the Promise
+      const emailSubject = "Account Verification";
+      const emailText = `Hello ${user.name},
+
+        Kindly click the link below to verify your account.
+
+        ${process.env.VERIFY_BUYER_LINK}/${accessToken}
+    
+        Regards,
+        E-site Management`;
+
+      await sendEmail(userEmail, emailSubject, emailText);
       return sendResponse(res, true, 200, "user registered successfully");
     }
   } catch (e) {
@@ -46,7 +68,9 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const user = await User.findOne({
     email: req.body.email,
-  }).select('password').exec();
+  })
+    .select("password")
+    .exec();
   const userExist = await User.findOne({
     email: req.body.email,
   }).exec();
@@ -69,6 +93,9 @@ exports.login = async (req, res) => {
           user: userExist.name,
           token: accessToken,
           role: userExist.role,
+          softDelete: userExist.softDelete,
+          verified: userExist.verified,
+          submittedVerificationDoc: userExist.verificationDoc ? true : false
           // cart: userExist.cart.length,
           // address: userExist.address.length,
           // wishlist: userExist.wishlist.length,
@@ -172,12 +199,17 @@ exports.resetPasswordRequest = async (req, res, next) => {
     if (userExist === null) {
       return sendResponse(res, true, 400, "Invalid Token");
     }
-    if(userExist){
+    if (userExist) {
       const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
       await User.findByIdAndUpdate(req.user._id, {
         password: hashedPassword,
       });
-      return sendResponse(res, true, 200, "Password has been Reset Successfully");
+      return sendResponse(
+        res,
+        true,
+        200,
+        "Password has been Reset Successfully"
+      );
     }
   } catch (e) {
     console.log("e", e);

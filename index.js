@@ -45,6 +45,7 @@ const orderRoutes = require("./src/routes/order.routes")
 const categoryRoutes = require("./src/routes/category.routes")
 const wishlistRoutes = require("./src/routes/wishlist.routes")
 const userRoutes = require("./src/routes/user.routes")
+const uploadSellerVerificationDocRoutes = require("./src/routes/verificationdoc.route")
 
 app.use("/", authRoutes);
 app.use("/", uploadRoutes);
@@ -56,6 +57,7 @@ app.use("/", paymentRoutes);
 app.use("/", categoryRoutes);
 app.use("/", wishlistRoutes);
 app.use("/", userRoutes);
+app.use("/", uploadSellerVerificationDocRoutes)
 
 app.listen(port, () => {
   console.log(`app is running at ${port}`);

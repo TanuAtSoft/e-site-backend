@@ -17,7 +17,6 @@ exports.updateWishlist = async (req, res) => {
     return sendResponse(res, false, 400, err.message);
   }
 };
-
 //remove on element from cart
 exports.deleteWishlist = async (req, res) => {
   try {

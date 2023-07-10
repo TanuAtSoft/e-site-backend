@@ -9,15 +9,41 @@ const {
 router.get(
   "/getSeller",
   authenticated,
-  authorize("admin"),
+  authorize("ADMIN"),
   userController.getSeller
 );
 
 router.get(
   "/getBuyer",
   authenticated,
-  authorize("admin"),
+  authorize("ADMIN"),
   userController.getBuyer
 );
+
+router.patch(
+  "/blockSeller/:id",
+  authenticated,
+  authorize("ADMIN"),
+  userController.blockSeller
+);
+
+router.get(
+  "/userInfo/:id",
+  userController.getUserInfoById
+);
+
+router.patch(
+  "/verifyUser",
+  authenticated,
+  authorize("BUYER"),
+  userController.verifyUser
+);
+router.patch(
+  "/verifySeller/:id",
+  authenticated,
+  authorize("ADMIN"),
+  userController.verifySeller
+);
+
 
 module.exports = router;

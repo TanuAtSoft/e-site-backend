@@ -18,7 +18,7 @@ exports.createOrder = async (req, res) => {
       const product = await Product.findById(d[i].productId);
       const temp = (product.price / 100) * product.discount;
       const temp2 = product.price - temp;
-      d[i].discountedPrice =  temp2.toFixed();
+      d[i].discountedPrice = temp2.toFixed();
       product.stock = parseInt(product.stock) - parseInt(d[i].quantity);
       await product.save();
       await data.save();
@@ -30,7 +30,7 @@ exports.createOrder = async (req, res) => {
       orderedItems: d,
       deliveryAddress: req.body.deliveryAddress,
       paymentStatus: req.body.isCod ? "COD" : "PREPAID",
-      totalAmountPaid: req.body.totalAmountPaid
+      totalAmountPaid: req.body.totalAmountPaid,
     });
     await newOrder.save();
     await data.updateOne({ $push: { orders: newOrder._id } }, { multi: true });
@@ -72,11 +72,12 @@ exports.createOrder = async (req, res) => {
 
     Products:
     ${d
-      .map(
-        (product) =>
-          `- ${product.title} (Quantity: ${product.quantity}) (Price: ${product.discountedPrice? product.discountedPrice : product.price})`
-      )
-      .join("\n")}
+            .map(
+              (product) =>
+                `- ${product.title} (Quantity: ${product.quantity}) (Price: ${product.discountedPrice ? product.discountedPrice : product.price
+                })`
+            )
+            .join("\n")}
 
     Payment Mode: ${newOrder.paymentStatus} 
     Total Amount Paid : ${req.body.totalAmountPaid}
@@ -178,7 +179,7 @@ exports.update_review_Info = async (req, res) => {
 
 exports.update_Order_Info = async (req, res) => {
   try {
-    const order =await Order.findOneAndUpdate(
+    const order = await Order.findOneAndUpdate(
       {
         _id: req.body.orderObjectId,
         "orderedItems._id": req.body.itemId,
@@ -188,15 +189,16 @@ exports.update_Order_Info = async (req, res) => {
           "orderedItems.$.status": req.body.status,
           "orderedItems.$.shippingCompany": req.body.shippingCompany,
           "orderedItems.$.trackingNumber": req.body.trackingNumber,
+          "orderedItems.$.updatedAt": Date.now(),
         },
       },
       {
         multi: false,
       }
     );
-    if(order){
-      for (let i = 0 ; i< order.orderedItems.length; i++){
-        if(order.orderedItems[i].productId === req.body.productId ){
+    if (order) {
+      for (let i = 0; i < order.orderedItems.length; i++) {
+        if (order.orderedItems[i].productId === req.body.productId) {
           const userEmail = await getUserEmailById(order.orderedBy);
           const emailSubjectUser = "Order Status Change";
           const emailText = `Hello,
@@ -204,20 +206,25 @@ exports.update_Order_Info = async (req, res) => {
            For Item ${order.orderedItems[i].title}
            of  ${order.orderedItems[i].quantity}
            order status changed to ${req.body.status}
-           Payment status for this product is ${order.paymentStatus} of INR ${order.orderedItems[i].price * order.orderedItems[i].quantity}
+           Payment status for this product is ${order.paymentStatus} of INR ${order.orderedItems[i].discountedPrice *
+            order.orderedItems[i].quantity
+            }
            Kindly Login to your https://e-site-flame.vercel.app/ to see complete details.
             Thank you for your business!
             Regards,
             E-site Management`;
           await sendEmail(userEmail, emailSubjectUser, emailText);
-          return sendResponse(res, true, 200, "Updated order status successfully");
+          return sendResponse(
+            res,
+            true,
+            200,
+            "Updated order status successfully"
+          );
         }
-      
       }
-    
     }
   } catch (e) {
-    console.log("e",e)
+    console.log("e", e);
     return sendResponse(res, false, 401, "Something went wrong");
   }
 };
@@ -381,9 +388,19 @@ exports.seller_stocks_info = async (req, res, next) => {
   try {
     const data = await Order.aggregate([
       { $unwind: "$orderedItems" },
+      // {
+      //   $match: {
+      //     "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+      //   },
+      // },
       {
         $match: {
-          "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+          $and: [
+            {
+              "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+            },
+            { "orderedItems.status": { $ne: "CANCELLED" } },
+          ],
         },
       },
       {
@@ -449,8 +466,16 @@ exports.seller_bestseller_info = async (req, res, next) => {
     const data = await Order.aggregate([
       { $unwind: "$orderedItems" },
       {
+        // $match: {
+        //   "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+        // },
         $match: {
-          "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+          $and: [
+            {
+              "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
+            },
+            { "orderedItems.status": { $ne: "CANCELLED" } },
+          ],
         },
       },
       {
@@ -523,5 +548,78 @@ exports.best_seller_products = async (req, res) => {
     return sendResponse(res, true, 200, "found orders", data);
   } catch (e) {
     return sendResponse(res, false, 400, e);
+  }
+};
+
+exports.cancel_Order_Info = async (req, res) => {
+  try {
+    const order = await Order.findOneAndUpdate(
+      {
+        _id: req.body.orderObjectId,
+        "orderedItems.productId": req.body.productId,
+      },
+      {
+        $set: {
+          "orderedItems.$.status": "CANCELLED",
+          "orderedItems.$.updatedAt": Date.now(),
+        },
+      },
+      {
+        multi: false,
+      }
+    );
+    if (order) {
+      for (let i = 0; i < order.orderedItems.length; i++) {
+        if (order.orderedItems[i].productId === req.body.productId) {
+          const userEmail = await getUserEmailById(order.orderedBy);
+          const product = await Product.findById(
+            req.body.productId
+          );
+          product.stock = product.stock + order.orderedItems[i].quantity;
+          await product.save();
+          const sellerEmail = await getUserEmailById(order.orderedItems[i].seller)
+          const text =
+            order.paymentStatus === "PREPAID"
+              ? "your amount will be refunded within 3 working days"
+              : "";
+          const emailSubjectUser = "Order has been Cancelled";
+          const emailText = `Hello,
+            Your order with order ID ${order.orderId} has cancelled.
+           For Item ${order.orderedItems[i].title}
+           of  ${order.orderedItems[i].quantity}
+           Payment status for this product is ${order.paymentStatus} of INR ${order.orderedItems[i].discountedPrice *
+            order.orderedItems[i].quantity
+            }
+           ${text}
+           Kindly Login to your https://e-site-flame.vercel.app/ to see complete details.
+            Thank you for your business!
+            Regards,
+            E-site Management`;
+          const sellerEmailText = `Hello,
+            Your order with order ID ${order.orderId} has been cancelled by the buyer.
+           For Item ${order.orderedItems[i].title}
+           of  ${order.orderedItems[i].quantity}
+           Payment status for this product was ${order.paymentStatus} of INR ${order.orderedItems[i].discountedPrice *
+            order.orderedItems[i].quantity
+            }
+           Kindly Login to your https://e-site-flame.vercel.app/ to see complete details.
+            Thank you for your business!
+            Regards,
+            E-site Management`;
+
+          await sendEmail(userEmail, emailSubjectUser, emailText);
+          await sendEmail(sellerEmail, emailSubjectUser, sellerEmailText);
+          return sendResponse(
+            res,
+            true,
+            200,
+            "order cancelled successfully"
+          );
+        }
+      }
+    }
+  } catch (e) {
+    console.log("e", e);
+    return sendResponse(res, false, 401, "Something went wrong");
   }
 };

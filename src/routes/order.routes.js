@@ -28,6 +28,14 @@ router.patch(
   authenticated,
   orderController.update_Order_Info
 );
+
+
+router.patch(
+  "/cancelOrder",
+  authenticated,
+  orderController.cancel_Order_Info
+);
+
 router.get(
   "/getBuyerOrderInfo",
   authenticated,

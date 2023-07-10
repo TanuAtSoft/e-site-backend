@@ -5,5 +5,6 @@
       shipped: 'SHIPPED',
       inTransit: 'INTRANSIT',
       delivered: 'DELIVERED',
+      cancelled:'CANCELLED'
     },
   };

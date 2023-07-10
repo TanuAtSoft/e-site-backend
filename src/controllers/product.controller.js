@@ -4,8 +4,7 @@ const { sendResponse } = require("../helpers/requestHandlerHelper");
 exports.getProducts = async (req, res, next) => {
   try {
     const products = await Product.find({ softDeleted: false }).populate(
-      "seller",
-      "name"
+    "seller"
     );
 
     return sendResponse(res, true, 200, "Products found successfully", {
@@ -19,8 +18,7 @@ exports.getProducts = async (req, res, next) => {
 exports.getSingleProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id).populate(
-      "seller",
-      "name"
+      "seller"
     );
 
     return sendResponse(res, true, 200, "Product found successfully", {
@@ -115,7 +113,7 @@ exports.getTopRatedProducts = async (req, res, next) => {
     const product = await Product.aggregate([
       {
         $project: {
-          _id: "$title",
+          _id: "$_id",
           title: "$title",
           images: "$images",
           brand: "$brand",
@@ -147,7 +145,7 @@ exports.getBestDealProducts = async (req, res, next) => {
     const product = await Product.aggregate([
       {
         $project: {
-          _id: "$title",
+          _id: "$_id",
           title: "$title",
           images: "$images",
           brand: "$brand",

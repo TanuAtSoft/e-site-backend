@@ -50,6 +50,10 @@ const OrderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
+      updatedAt: {
+        type: Date,
+        default: Date.now(),
+      },
       status: {
         type: String,
         enum: [
@@ -58,6 +62,7 @@ const OrderSchema = new mongoose.Schema({
           status.shipped,
           status.inTransit,
           status.delivered,
+          status.cancelled
         ],
       },
       shippingCompany: {

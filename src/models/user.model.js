@@ -8,6 +8,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  verified:{
+   type:Boolean,
+   default: false,
+  },
   email: {
     type: String,
     required: true,
@@ -48,6 +52,18 @@ const UserSchema = new mongoose.Schema({
       ref: "Address",
     },
   ],
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
+  softDelete:{
+    type:Boolean,
+    default:false
+  },
+  verificationDoc: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "VerificationDocument",
+  },
 });
 
 // UserSchema.pre('save', async function (next) {
