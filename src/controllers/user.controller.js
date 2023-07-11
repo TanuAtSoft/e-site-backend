@@ -4,7 +4,6 @@ const { sendEmail, getUserEmailById } = require("../services/emailSender");
 const Order = require("../models/order.model");
 const mongoose = require("mongoose");
 const Product = require("../models/product.model");
-const Cart = require("../models/cart.model");
 const { request } = require("express");
 
 exports.getSeller = async (req, res, next) => {
@@ -12,18 +11,27 @@ exports.getSeller = async (req, res, next) => {
     const sellers = await User.aggregate([
       { $match: { role: "SELLER" } },
       {
+        $lookup: {
+          from: "verificationdocuments",
+          localField: "verificationDoc",
+          foreignField: "_id",
+          as: "verificationDoc",
+        },
+      },
+      {
         $project: {
           _id: "$_id",
           name: "$name",
           email: "$email",
           createdAt: "$createdAt",
           softDelete: "$softDelete",
-          verificationDoc:"$verificationDoc"
+          verified: "$verified",
+          verificationDoc: "$verificationDoc",
         },
       },
     ]);
     // const users = await User.find({ role: "SELLER" });
-    return sendResponse(res, true, 200, "Products found successfully", {
+    return sendResponse(res, true, 200, "Sellers found successfully", {
       sellers,
     });
   } catch (error) {
@@ -34,13 +42,15 @@ exports.getSeller = async (req, res, next) => {
 exports.getBuyer = async (req, res, next) => {
   try {
     const buyers = await User.aggregate([
-      { $match: { role: "SELLER" } },
+      { $match: { role: "BUYER" } },
       {
         $project: {
           _id: "$_id",
           name: "$name",
           email: "$email",
           createdAt: "$createdAt",
+          softDelete: "$softDelete",
+          verified: "$verified",
         },
       },
     ]);
@@ -153,7 +163,7 @@ exports.blockSeller = async (req, res, next) => {
 
 exports.getUserInfoById = async (req, res, next) => {
   try {
-    const sellers = await User.findById(request.params.id);
+    const sellers = await User.findById(req.params.id);
     // const users = await User.find({ role: "SELLER" });
     return sendResponse(res, true, 200, "users found successfully", {
       sellers,
@@ -186,8 +196,20 @@ exports.verifySeller = async (req, res, next) => {
     });
     if (user.verified)
       return sendResponse(res, true, 200, "User is already verified");
-    if (!user.verified) user.verified = true;
-    await user.save();
+    if (!user.verified) {
+      user.verified = true;
+      const userEmail = user.email;
+      const emailSubjectUser = "Your Account has been verified";
+      const emailText = `Hello ${user.name},
+          your account has been successfully verified,
+           Kindly Login to your https://e-site-flame.vercel.app/ to see your dashboard and start adding your product and start selling.
+            Happy Selling!
+            Regards,
+            E-site Management`;
+      await sendEmail(userEmail, emailSubjectUser, emailText);
+
+      await user.save();
+    }
     return sendResponse(res, true, 200, "User is verified successfully");
   } catch (error) {
     next(error);

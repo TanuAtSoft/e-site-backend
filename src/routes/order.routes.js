@@ -7,8 +7,8 @@ const {
 const {
   createOrderValidator,
   updateOrderReviewValidator,
-  updateOrderInfoValidator
-} = require("../validators/order.validator")
+  updateOrderInfoValidator,
+} = require("../validators/order.validator");
 
 router.post(
   "/saveOrder",
@@ -18,7 +18,12 @@ router.post(
   orderController.createOrder
 );
 
-router.get("/getOrders", orderController.getAllOrders);
+router.get(
+  "/getOrders",
+  authenticated,
+  authorize(["ADMIN"]),
+  orderController.getAllOrders
+);
 
 router.get("/getOrderInfo", authenticated, orderController.seller_order_info);
 
@@ -29,12 +34,7 @@ router.patch(
   orderController.update_Order_Info
 );
 
-
-router.patch(
-  "/cancelOrder",
-  authenticated,
-  orderController.cancel_Order_Info
-);
+router.patch("/cancelOrder", authenticated, orderController.cancel_Order_Info);
 
 router.get(
   "/getBuyerOrderInfo",
@@ -45,28 +45,28 @@ router.get(
 router.get(
   "/getSellerMatricsInfo",
   authenticated,
-  authorize(["SELLER","ADMIN"]),
+  authorize(["SELLER", "ADMIN"]),
   orderController.seller_metrics_info
 );
 
 router.get(
   "/sellerStocksInfo",
   authenticated,
-  authorize(["SELLER","ADMIN"]),
+  authorize(["SELLER", "ADMIN"]),
   orderController.seller_stocks_info
 );
 
 router.get(
   "/sellerRevenueInfo",
   authenticated,
-  authorize(["SELLER","ADMIN"]),
+  authorize(["SELLER", "ADMIN"]),
   orderController.seller_revenue_info
 );
 
 router.get(
   "/sellerBestSellerInfo",
   authenticated,
-  authorize(["SELLER","ADMIN"]),
+  authorize(["SELLER", "ADMIN"]),
   orderController.seller_bestseller_info
 );
 

@@ -33,7 +33,7 @@ exports.register = async (req, res) => {
         email: req.body.email,
         password: hashedPassword,
         role: roles.buyer,
-        verified: false
+        verified: false,
       });
       await user.save();
       const accessToken = jwt.sign(
@@ -88,18 +88,29 @@ exports.login = async (req, res) => {
           process.env.ACCESS_TOKEN_SECRET,
           { expiresIn: "1h" }
         );
-
-        const user = {
-          user: userExist.name,
-          token: accessToken,
-          role: userExist.role,
-          softDelete: userExist.softDelete,
-          verified: userExist.verified,
-          submittedVerificationDoc: userExist.verificationDoc ? true : false
-          // cart: userExist.cart.length,
-          // address: userExist.address.length,
-          // wishlist: userExist.wishlist.length,
-        };
+        let user;
+        if (userExist.role === "ADMIN") {
+          user = {
+            user: userExist.name,
+            token: accessToken,
+            role: userExist.role,
+            softDelete: false,
+            verified: true,
+            submittedVerificationDoc: true,
+          };
+        } else {
+          user = {
+            user: userExist.name,
+            token: accessToken,
+            role: userExist.role,
+            softDelete: userExist.softDelete,
+            verified: userExist.verified,
+            submittedVerificationDoc: userExist.verificationDoc ? true : false,
+            // cart: userExist.cart.length,
+            // address: userExist.address.length,
+            // wishlist: userExist.wishlist.length,
+          };
+        }
 
         return sendResponse(
           // res.cookie("access_token", accessToken, {
