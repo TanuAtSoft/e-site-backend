@@ -34,6 +34,8 @@ router.patch(
   orderController.update_Order_Info
 );
 
+// router.proppatch("/cancelOrder", authenticated, orderController.cancel_Order);
+
 router.patch("/cancelOrder", authenticated, orderController.cancel_Order_Info);
 
 router.get(

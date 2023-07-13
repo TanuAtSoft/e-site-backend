@@ -29,6 +29,7 @@ router.patch(
 
 router.get(
   "/userInfo/:id",
+  authenticated,
   userController.getUserInfoById
 );
 

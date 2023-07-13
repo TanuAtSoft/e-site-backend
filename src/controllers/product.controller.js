@@ -4,7 +4,7 @@ const { sendResponse } = require("../helpers/requestHandlerHelper");
 exports.getProducts = async (req, res, next) => {
   try {
     const products = await Product.find({ softDeleted: false }).populate(
-    "seller"
+      "seller"
     );
 
     return sendResponse(res, true, 200, "Products found successfully", {
@@ -17,9 +17,7 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getSingleProduct = async (req, res, next) => {
   try {
-    const product = await Product.findById(req.params.id).populate(
-      "seller"
-    );
+    const product = await Product.findById(req.params.id).populate("seller");
 
     return sendResponse(res, true, 200, "Product found successfully", {
       product,
@@ -30,22 +28,31 @@ exports.getSingleProduct = async (req, res, next) => {
 };
 
 exports.addProduct = async (req, res, next) => {
-  const product = new Product({
-    title: req.body.title,
-    brand: req.body.brand,
-    name: req.body.name,
-    discount: req.body.discount,
-    main_category: req.body.main_category,
-    sub_category: req.body.sub_category,
-    images: req.body.images,
-    description: req.body.description,
-    price: req.body.price,
-    stock: req.body.stock,
-    seller: req.user._id,
-  });
-
-  await product.save();
-  return sendResponse(res, true, 200, "product added successfully");
+  const userExist = await User.findOne({ _id: req.user._id });
+  if (userExist.verified) {
+    const product = new Product({
+      title: req.body.title,
+      brand: req.body.brand,
+      name: req.body.name,
+      discount: req.body.discount,
+      main_category: req.body.main_category,
+      sub_category: req.body.sub_category,
+      images: req.body.images,
+      description: req.body.description,
+      price: req.body.price,
+      stock: req.body.stock,
+      seller: req.user._id,
+    });
+    await product.save();
+    return sendResponse(res, true, 200, "product added successfully");
+  } else {
+    return sendResponse(
+      res,
+      true,
+      200,
+      "seller is not verified to add the product"
+    );
+  }
 };
 
 exports.editProduct = async (req, res, next) => {
@@ -151,7 +158,7 @@ exports.getBestDealProducts = async (req, res, next) => {
           brand: "$brand",
           price: "$price",
           reviews: "$reviews",
-          discount: "$discount"
+          discount: "$discount",
         },
       },
       {
@@ -201,7 +208,7 @@ exports.getProductsBySearch = async (req, res, next) => {
             // fuzzy: {},
           },
         },
-      }
+      },
     ];
     const products = await Product.aggregate(pipeline);
     return sendResponse(
@@ -226,19 +233,21 @@ exports.getSearchAutoComplete = async (req, res, next) => {
             query: req.params.text,
             path: "name",
             fuzzy: {
-              "maxEdits": 2,
-              "prefixLength": 3,
+              maxEdits: 2,
+              prefixLength: 3,
             },
           },
         },
-      },{
-        $limit:10
-      },{
-        $project:{
-          "_id":0,
-          "name":1
-        }
-      }
+      },
+      {
+        $limit: 10,
+      },
+      {
+        $project: {
+          _id: 0,
+          name: 1,
+        },
+      },
     ];
     const products = await Product.aggregate(pipeline);
     return sendResponse(
