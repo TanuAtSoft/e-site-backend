@@ -126,19 +126,6 @@ exports.seller_order_info = async (req, res) => {
           "orderedItems.seller": new mongoose.Types.ObjectId(req.user._id),
         },
       },
-      // {
-      //   $group: {
-      //     _id: 0,
-      //     items_delivered: {
-      //       $sum: "$orderedItems.quantity",
-      //     },
-      //     revenue_generated: {
-      //       $sum: {
-      //         $multiply: ["$orderedItems.quantity", "$orderedItems.price"],
-      //       },
-      //     },
-      //   },
-      // },
     ]);
 
     return sendResponse(res, true, 200, "found orders", data);
@@ -623,68 +610,3 @@ exports.cancel_Order_Info = async (req, res) => {
     return sendResponse(res, false, 401, "Something went wrong");
   }
 };
-
-// exports.cancel_Order = async (req, res) => {
-//   try {
-//     const order = await Order.findOneAndUpdate(
-//       {
-//         _id: req.body.orderObjectId,
-//         "orderedItems._id": req.body.itemId,
-//       },
-//       {
-//         $set: {
-//           "orderedItems.$.status": "CANCELLED",
-//           "orderedItems.$.updatedAt": Date.now(),
-//         },
-//       },
-//       {
-//         multi: false,
-//       }
-//     );
-//     if (order) {
-//       for (let i = 0; i < order.orderedItems.length; i++) {
-//         if (order.orderedItems[i].productId === req.body.productId) {
-//           const sellerEmail = await getUserEmailById(order.orderedItems[i].seller)
-//           const userEmail = await getUserEmailById(order.orderedBy);
-//           const emailSubjectUser = "Order has been Cancelled";
-//           const emailText = `Hello,
-//             Your order status with order ID ${order.orderId} has been Cancelled.
-//            For Item ${order.orderedItems[i].title}
-//            of  ${order.orderedItems[i].quantity}
-//            Payment status for this product is ${order.paymentStatus} of INR ${order.orderedItems[i].discountedPrice *
-//             order.orderedItems[i].quantity
-//             }
-//            Kindly Login to your https://e-site-flame.vercel.app/ to see complete details.
-//             Thank you for your business!
-//             Regards,
-//             E-site Management`;
-//             const sellerEmailText = `Hello,
-//             Your order status with order ID ${order.orderId} has been Cancelled by the buyer.
-//            For Item ${order.orderedItems[i].title}
-//            of  ${order.orderedItems[i].quantity}
-//            Payment status for this product is ${order.paymentStatus} of INR ${order.orderedItems[i].discountedPrice *
-//             order.orderedItems[i].quantity
-//             }
-//            Kindly Login to your https://e-site-flame.vercel.app/ to see complete details.
-//             Thank you for your business!
-//             Regards,
-//             E-site Management`;
-//           await sendEmail(userEmail, emailSubjectUser, emailText);
-//           await sendEmail(sellerEmail, emailSubjectUser, sellerEmailText);
-//           return sendResponse(
-//             res,
-//             true,
-//             200,
-//             "Updated order status successfully"
-//           );
-//         }
-//       }
-//     }
-//   } catch (e) {
-//     console.log("e", e);
-//     return sendResponse(res, false, 401, "Something went wrong");
-//   }
-// };
-
-
-
