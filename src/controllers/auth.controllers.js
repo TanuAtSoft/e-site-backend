@@ -52,7 +52,7 @@ exports.register = async (req, res) => {
 
         Kindly click the link below to verify your account.
 
-        ${process.env.VERIFY_BUYER_LINK}/${accessToken}
+        https://e-site-flame.vercel.app/verifyBuyerAccount/${accessToken}
     
         Regards,
         E-site Management`;
@@ -186,7 +186,7 @@ exports.forgotPassword = async (req, res, next) => {
 
         Kindly click the link below to reset your password.
 
-        ${process.env.FORGOT_PASSWORD_LINK}/${accessToken}
+        https://e-site-flame.vercel.app/resetPasswordLink/${accessToken}
     
         Regards,
         E-site Management`;
