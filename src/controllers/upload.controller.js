@@ -18,7 +18,6 @@ const configs = {
 
 const S3 = new AWS.S3(configs);
 const UploadtoS3 = (file) => {
-  console.log("file", file);
   return new Promise((resolve, reject) => {
     const params = {
       Bucket: S3_BUCKET,

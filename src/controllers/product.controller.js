@@ -58,23 +58,34 @@ exports.addProduct = async (req, res, next) => {
 exports.editProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
-    if (product) {
-      (product.title = req.body.title),
-        (product.name = req.body.name),
-        (product.brand = req.body.brand),
-        (product.discount = req.body.discount),
-        (product.main_category = req.body.main_category),
-        (product.sub_category = req.body.sub_category),
-        (product.images = req.body.images),
-        (product.description = req.body.description),
-        (product.stock = req.body.stock),
-        (product.softDeleted = req.body.softDeleted
-          ? req.body.softDeleted
-          : false),
-        (product.price = req.body.price);
+    const userExist = await User.findOne({ _id: req.user._id });
+    if (userExist.verified) {
+      if (product) {
+        (product.title = req.body.title),
+          (product.name = req.body.name),
+          (product.brand = req.body.brand),
+          (product.discount = req.body.discount),
+          (product.main_category = req.body.main_category),
+          (product.sub_category = req.body.sub_category),
+          (product.images = req.body.images),
+          (product.description = req.body.description),
+          (product.stock = req.body.stock),
+          (product.softDeleted = req.body.softDeleted
+            ? req.body.softDeleted
+            : false),
+          (product.price = req.body.price);
 
-      await product.save();
-      return sendResponse(res, true, 200, "product edited successfully");
+        await product.save();
+        return sendResponse(res, true, 200, "product edited successfully");
+      }
+    }
+    if (!userExist.verified) {
+      return sendResponse(
+        res,
+        true,
+        200,
+        "seller is not verified to add the product"
+      );
     }
 
     // data.cart.push(res.body.postId)
