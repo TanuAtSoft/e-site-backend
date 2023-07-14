@@ -1,5 +1,6 @@
 const Product = require("../models/product.model");
 const { sendResponse } = require("../helpers/requestHandlerHelper");
+const User = require("../models/user.model")
 
 exports.getProducts = async (req, res, next) => {
   try {
