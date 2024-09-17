@@ -43,7 +43,7 @@ exports.register = async (req, res) => {
           role: roles.buyer,
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "1d" }
+        { expiresIn: "30d" }
       );
 
       const userEmail = user.email; // Await the function call to resolve the Promise
