@@ -74,7 +74,7 @@ router.get(
 
 router.patch(
   "/reviewProduct",
-  updateOrderReviewValidator,
+ // updateOrderReviewValidator,
   authenticated,
   authorize(["BUYER"]),
   orderController.update_review_Info
